@@ -12,8 +12,8 @@ flag77=-c -cpp -fdefault-real-8 -fdefault-integer-8
 # Source directories.
 
 srcdir=source
-auxdir=../auxilliary
-xmldir=../xmlf90
+auxdir=./auxilliary
+xmldir=./xmlf90
 
 ###########################################################################
 # Set directory and file names:
