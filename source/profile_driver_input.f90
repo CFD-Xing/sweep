@@ -103,7 +103,8 @@ Module Profile_Driver_Input
         Character(LEN=128) :: arg
 
         ! EXECUTABLE CODE.
-        N = NARGS()
+!        N = NARGS()
+        N = 1
         i = 1
 
         Do While (i <= N)
@@ -396,3 +397,4 @@ Module Profile_Driver_Input
     End Subroutine
     
 End Module
+

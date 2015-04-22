@@ -72,13 +72,26 @@ Module SWPSTATS_INDICES
 	! NAMES.
 	! -------------------------------------------------------
    
-	Character(LEN=*), Parameter :: Names(Count) = (/"Stoch. Particle Count",&
-	"Number Density (cm-3)","Carbon Atom Density (cm-3)","Volume Fraction",&
-	"Mass (g/cm3)","Surface Area (cm2/cm3)",&
-	"Average # Carbon Atoms","Average Volume (cm3)","Average Mass (g)",&
-	"Average Surface Area (cm2)","Average Active Surface Area (cm2)",&
-	"Average Collision Diameter (nm)",&
-	"Sample Volume (cm3)","Ensemble Scaling Factor","M2","M3","M4","M5","M6"/)
+	Character(LEN=*), Parameter :: Names(Count) = (/&
+        "            Stoch. Particle Count", &
+	"            Number Density (cm-3)", &
+        "       Carbon Atom Density (cm-3)", &
+        "                  Volume Fraction", &
+	"                     Mass (g/cm3)", &
+        "           Surface Area (cm2/cm3)", &
+	"           Average # Carbon Atoms", &
+        "             Average Volume (cm3)", &
+        "                 Average Mass (g)", &
+	"       Average Surface Area (cm2)", &
+        "Average Active Surface Area (cm2)", &
+	"  Average Collision Diameter (nm)", &
+	"              Sample Volume (cm3)", &
+        "          Ensemble Scaling Factor", &
+        "                               M2", &
+        "                               M3", &
+        "                               M4", &
+        "                               M5", &
+        "                               M6"/)
 End Module
 
 ! ==============================================================================
@@ -438,7 +451,8 @@ Module SWPSTATS
 		If (N > 0) Then
 			Do i = 1, N
                 pcl(1:mech%ComponentCount,i) = Dble(ens%Particles(i)%Components(1:mech%ComponentCount))
-                pcl(mech%ComponentCount+1:mech%ComponentCount+mech%TrackerCount,i) = Dble(ens%Particles(i)%Track(1:mech%TrackerCount))
+                pcl(mech%ComponentCount+1:mech%ComponentCount+mech%TrackerCount,i) = &
+                Dble(ens%Particles(i)%Track(1:mech%TrackerCount))
 			End Do
 		End If
 	End Function
