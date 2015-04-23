@@ -61,12 +61,7 @@ Module Profile_Driver_Output
     Subroutine PrintHeader()
         Use ConsoleTable, ph=>PrintHeader
         Implicit None
-	    Call ph("Step", (/"Time (s)", &
-                              "#     SP", &
-                              "      M0", &
-                              "      M1", &
-                              " Surface", &
-                              "  Avg. D"/), 6)
+	    Call ph("Step", (/"Time (s)", "#SP", "M0", "M1", "Surface", "Avg. D"/), 6)
     End Subroutine
 
     ! -------------------------------------------------------
@@ -92,7 +87,7 @@ Module Profile_Driver_Output
         
         Inquire(UNIT=UOUT, OPENED=o)
 
-        If (.not. o) Then
+        If (o == .False.) Then
 		Open(UNIT=UOUT, FILE=Trim(file)//"("//Trim(CStr(run))//").dat", FORM="UNFORMATTED", &
 		     STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
              If (flag /= 0) flag = -1
@@ -230,8 +225,7 @@ Module Profile_Driver_Output
 							  (Trim(StatNames(i)) // " Err", i=1, NSTATS), &
                               (Trim(mech%GroupNames(i)) // " Err", i=1, mech%GroupCount)
         Do i = 1, N
-!            Write(UOUT, FMT=ESFMT) Dble(i-1), t(i), as(:,i), ar(:,i), es(:,i), er(:,i)
-            Write(UOUT,*) Dble(i-1), t(i), as(:,i), ar(:,i), es(:,i), er(:,i)
+            Write(UOUT, FMT=ESFMT) Dble(i-1), t(i), as(:,i), ar(:,i), es(:,i), er(:,i)
         End Do
 
         Close(UOUT, IOSTAT=flag)
@@ -327,8 +321,7 @@ Module Profile_Driver_Output
                 pcount = Count(psl(1,:,i) > 0.0D0)
                 wt = M0(i) / Dble(pcount * runs)
                 Do j = 1, pcount
-!                    Write(UPSL, FMT=ESFMT) wt, psl(1:4,j,i), pcl(:,j,i)
-                    Write(UPSL,*) wt, psl(1:4,j,i), pcl(:,j,i)
+                    Write(UPSL, FMT=ESFMT) wt, psl(1:4,j,i), pcl(:,j,i)
                 End Do
             End Do
             Close(UPSL, IOSTAT=flag)

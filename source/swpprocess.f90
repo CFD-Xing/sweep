@@ -94,7 +94,7 @@
 !	DeferredSurface		-	Performs a deferred surface event on a given particle.
 !	-- (Chemistry Interaction) ------------------------------------------------
 !	UpdateChemistry(S/I) -	Updates the gas-phase chemistry according to the
-!					 	given reaction.
+!						 	given reaction.
 !	-- (Auxiliary routines) ---------------------------------------------------
 !	SampleVolume		-	Calculates the sample volume of the particle ensemble
 !							for the given temperature.
@@ -163,7 +163,7 @@ Module SWPPROCESS
 		RateTerms = 0.0E0
 
 		! Get required system properties.
-		N = ParticleCount(soln%Ensemble)
+		N	 = ParticleCount(soln%Ensemble)
 		sums = GetParticleSums(soln%Ensemble)
         vol  = SampleVolume(soln, chem(soln%Chemistry%Shared%iT))
 		
@@ -172,14 +172,14 @@ Module SWPPROCESS
 
         ! Calculate surface process rates.
         If (SURF_ON) Then
-	    RateTerms(mech%ISR:mech%ISR+mech%ReactionCount-1) = SurfaceRates(chem, N, sums, soln, mech, err)
+		    RateTerms(mech%ISR:mech%ISR+mech%ReactionCount-1) = SurfaceRates(chem, N, sums, soln, mech, err)
 
-	    ! If any processes are deferred then the surface rates
-	    ! need to be scaled by a majorant factor.
-	    If (mech%AnyDeferred) Then
-		    RateTerms(mech%ISR:mech%ISR+mech%ReactionCount-1) = &
+		    ! If any processes are deferred then the surface rates
+		    ! need to be scaled by a majorant factor.
+		    If (mech%AnyDeferred) Then
+			    RateTerms(mech%ISR:mech%ISR+mech%ReactionCount-1) = &
                 RateTerms(mech%ISR:mech%ISR+mech%ReactionCount-1) * SURF_MAJ
-	    End If
+		    End If
         End If
 
 		! Calculate coagulation rates.
@@ -197,7 +197,7 @@ Module SWPPROCESS
 		! Inflow and outflow rate.
         If (soln%SolveInOut) Then
             RateTerms(mech%IIN)  = 0.0E0
-	    RateTerms(mech%IOUT) = N / soln%ResidenceTime
+		    RateTerms(mech%IOUT) = N / soln%ResidenceTime
         End If
 
 		If (Any(RateTerms < 0.0E0)) Then
@@ -230,7 +230,7 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN) :: t, chem(:)     ! Current flow time and chemical conditions.
+		Real, Intent(IN)	 :: t, chem(:)     ! Current flow time and chemical conditions.
         Type(Solution), Intent(IN)  :: soln    ! Current solution.
         Type(Mechanism), Intent(IN) :: mech    ! Mechanism to use for rate calculation.
 		Integer, Intent(OUT) :: flag           ! Error flag.
@@ -254,13 +254,13 @@ Module SWPPROCESS
         End If
 
         If (flag == 0) Then
-	    ! Group together the rate terms.
-	    Do i = 1, mech%GroupCount
-		    Do j = 1,  mech%Groups(i)
-			    ir = ir + 1
-			    GroupedRateTerms(i) = GroupedRateTerms(i) + rates(ir)
+		    ! Group together the rate terms.
+		    Do i = 1, mech%GroupCount
+			    Do j = 1,  mech%Groups(i)
+				    ir = ir + 1
+				    GroupedRateTerms(i) = GroupedRateTerms(i) + rates(ir)
+			    End Do
 		    End Do
-	    End Do
         End If
 
         GroupedRateTerms = GroupedRateTerms / SampleVolume(soln, chem(soln%Chemistry%Shared%iT))
@@ -282,8 +282,8 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN) :: chem(:)     ! Current chemical conditions.
-		Real, Intent(IN) :: vol         ! Sample volume of the ensemble.
+		Real, Intent(IN)	 :: chem(:)     ! Current chemical conditions.
+		Real, Intent(IN)	 :: vol         ! Sample volume of the ensemble.
         Type(Solution), Intent(IN) :: soln  ! Solution to use.
         Type(Mechanism), Intent(IN) :: mech ! Mechanism to use for rate calculation.
 		Integer, Intent(OUT) :: flag        ! Error flag.
@@ -299,7 +299,7 @@ Module SWPPROCESS
 		! Precalculate useful quantities.
 		sqrtT = Sqrt(chem(soln%Chemistry%Shared%iT))
 		T_mu  = chem(soln%Chemistry%Shared%iT) / Visc(chem(soln%Chemistry%Shared%iT))
-		T_P  = chem(soln%Chemistry%Shared%iT) / chem(soln%Chemistry%Shared%iP)
+		T_P	  = chem(soln%Chemistry%Shared%iT) / chem(soln%Chemistry%Shared%iP)
 
 		Do i = 1, mech%InceptionCount
 			! Free-molecular and slip-flow kernels.
@@ -337,9 +337,9 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN) ::	chem(:)              ! Current chemical conditions.
+		Real, Intent(IN)	 ::	chem(:)              ! Current chemical conditions.
         Integer, Intent(IN)  :: N                    ! Particle count.
-		Real, Intent(IN) ::	sums(PROPERTY_COUNT) ! Sums of particle properties.
+		Real, Intent(IN)	 ::	sums(PROPERTY_COUNT) ! Sums of particle properties.
         Type(Solution), Intent(IN) :: soln           ! Solution to use.
         Type(Mechanism), Intent(IN) :: mech          ! Mechanism to use for rate calculation.
 		Integer, Intent(OUT) ::	flag                 ! Error flag.
@@ -365,7 +365,7 @@ Module SWPPROCESS
 				! Chemical species terms.
 				Do iSp = 1, mech%Reactions(i)%NREAC
 					SurfaceRates(i) = SurfaceRates(i) * &
-								  (chem(mech%Reactions(i)%Species(iSp)) ** mech%Reactions(i)%Stoich(iSp))
+									  (chem(mech%Reactions(i)%Species(iSp)) ** mech%Reactions(i)%Stoich(iSp))
 				End Do
 
 				! Temperature power and exponential dependency.
@@ -373,22 +373,21 @@ Module SWPPROCESS
                 SurfaceRates(i) * Exp((mech%Reactions(i)%n * lnT) - (mech%Reactions(i)%E * invRT))
 
                 If (mech%UseHACA) Then
-			    If (mech%Reactions(i)%ID == iAS) Then
-				    ! Active site fraction (if part of the chemistry profile).  If 
-				    ! the active surface model gets alpha per particle (ACT_SURF_PARTICLE)
-				    ! then there is no need to calculate alpha as it has
-				    ! already be applied to each particle.
-				    If (mech%ActSurfModel == ACT_SURF_CONST) Then
-					    SurfaceRates(i) = SurfaceRates(i) * mech%ConstActSurf * chem(soln%Chemistry%Shared%iRad)
-				    ElseIf (mech%ActSurfModel == ACT_SURF_ABF) Then
-					    SurfaceRates(i) = SurfaceRates(i) * &
-                                            ABFAlpha(chem(soln%Chemistry%Shared%iT), sums(iSz)/N) * chem(soln%Chemistry%Shared%iRad)
-				    ElseIf (mech%ActSurfModel == ACT_SURF_PROFILE) Then
-					    SurfaceRates(i) = SurfaceRates(i) * chem(soln%Chemistry%Shared%iAlpha) * chem(soln%Chemistry%Shared%iRad)
+				    If (mech%Reactions(i)%ID == iAS) Then
+					    ! Active site fraction (if part of the chemistry profile).  If 
+					    ! the active surface model gets alpha per particle (ACT_SURF_PARTICLE)
+					    ! then there is no need to calculate alpha as it has
+					    ! already be applied to each particle.
+					    If (mech%ActSurfModel == ACT_SURF_CONST) Then
+						    SurfaceRates(i) = SurfaceRates(i) * mech%ConstActSurf * chem(soln%Chemistry%Shared%iRad)
+					    ElseIf (mech%ActSurfModel == ACT_SURF_ABF) Then
+						    SurfaceRates(i) = SurfaceRates(i) * ABFAlpha(chem(soln%Chemistry%Shared%iT), sums(iSz)/N) * chem(soln%Chemistry%Shared%iRad)
+					    ElseIf (mech%ActSurfModel == ACT_SURF_PROFILE) Then
+						    SurfaceRates(i) = SurfaceRates(i) * chem(soln%Chemistry%Shared%iAlpha) * chem(soln%Chemistry%Shared%iRad)
                         ElseIf (mech%ActSurfModel == ACT_SURF_PARTICLE) Then
-					    SurfaceRates(i) = SurfaceRates(i) * chem(soln%Chemistry%Shared%iRad)
+						    SurfaceRates(i) = SurfaceRates(i) * chem(soln%Chemistry%Shared%iRad)
+					    End If
 				    End If
-			    End If
                 End If
 
 				! Soot property terms.
@@ -431,11 +430,11 @@ Module SWPPROCESS
                                                ! to calculate rate.
 		Type(StochParticle), Intent(IN)	:: sp  ! Stochastic particle for which
                                                ! to calculate the rate.
-		Real, Intent(IN) :: chem(:)        ! Current chemical conditions.
+		Real, Intent(IN)	 :: chem(:)        ! Current chemical conditions.
         Type(Solution), Intent(IN) :: soln     ! Solution to use.
         Type(Mechanism), Intent(IN) :: mech    ! Mechanism to use.
-		Logical, Intent(IN) :: maj           ! Flag indicating whether or not to calculate
-	                                       ! the majorant rate.
+		Logical, Intent(IN)	 :: maj	           ! Flag indicating whether or not to calculate
+		                                       ! the majorant rate.
 		Integer, Intent(OUT) :: flag           ! Error flag.
 
 		! VARIABLES.
@@ -458,19 +457,18 @@ Module SWPPROCESS
 			SingleParticleRate = SingleParticleRate * Exp(-rxn%E / (R * chem(soln%Chemistry%Shared%iT)))
 
             If (mech%UseHACA) Then
-		    If (rxn%ID == iAS) Then
-			    ! Active site fraction (if part of the chemistry profile).
-			    If (mech%ActSurfModel == ACT_SURF_CONST) Then
-				    SingleParticleRate = SingleParticleRate * mech%ConstActSurf * chem(soln%Chemistry%Shared%iRad)
-			    ElseIf (mech%ActSurfModel == ACT_SURF_PROFILE) Then
-				    SingleParticleRate = SingleParticleRate * chem(soln%Chemistry%Shared%iAlpha) * chem(soln%Chemistry%Shared%iRad)
-			    ElseIf (mech%ActSurfModel == ACT_SURF_ABF) Then
-				    SingleParticleRate = SingleParticleRate * &
-                                    ABFAlpha(chem(soln%Chemistry%Shared%iT), Real(SizeP(sp))) * chem(soln%Chemistry%Shared%iRad)
-			    ElseIf (mech%ActSurfModel == ACT_SURF_PARTICLE) Then
-				    SingleParticleRate = SingleParticleRate * chem(soln%Chemistry%Shared%iRad)
+			    If (rxn%ID == iAS) Then
+				    ! Active site fraction (if part of the chemistry profile).
+				    If (mech%ActSurfModel == ACT_SURF_CONST) Then
+					    SingleParticleRate = SingleParticleRate * mech%ConstActSurf * chem(soln%Chemistry%Shared%iRad)
+				    ElseIf (mech%ActSurfModel == ACT_SURF_PROFILE) Then
+					    SingleParticleRate = SingleParticleRate * chem(soln%Chemistry%Shared%iAlpha) * chem(soln%Chemistry%Shared%iRad)
+				    ElseIf (mech%ActSurfModel == ACT_SURF_ABF) Then
+					    SingleParticleRate = SingleParticleRate * ABFAlpha(chem(soln%Chemistry%Shared%iT), Real(SizeP(sp))) * chem(soln%Chemistry%Shared%iRad)
+				    ElseIf (mech%ActSurfModel == ACT_SURF_PARTICLE) Then
+					    SingleParticleRate = SingleParticleRate * chem(soln%Chemistry%Shared%iRad)
+				    End If
 			    End If
-		    End If
             End If
 
 			! Soot terms.
@@ -506,11 +504,11 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Type(StochParticle), Intent(IN)	:: sp   ! Particle for which to calculate the rate.
+		Type(StochParticle), Intent(IN)	:: sp	   ! Particle for which to calculate the rate.
 		Real, Intent(IN)				:: chem(:) ! Current chemical conditions.
         Type(Solution), Intent(IN)      :: soln    ! Solution to use.
         Type(Mechanism), Intent(IN)     :: mech    ! Mechanism used for rate calculation.
-		Integer, Intent(OUT)			:: flag   ! Error flag.
+		Integer, Intent(OUT)			:: flag	   ! Error flag.
 
 		! VARIABLES.
 		Integer :: i
@@ -524,7 +522,7 @@ Module SWPPROCESS
 				If (mech%DeferMask(mech%ISR+i-1)) Then
 					VolChangeRate = &
                     VolChangeRate + SingleParticleRate(mech%Reactions(i), sp, chem, soln, mech, .False., flag) * &
-							    Volume(mech%Reactions(i)%dComp, mech%Components, mech%ComponentCount)
+								    Volume(mech%Reactions(i)%dComp, mech%Components, mech%ComponentCount)
 
 					! Failed to calculate the single-particle
 					! rate for a surface reaction.
@@ -553,10 +551,10 @@ Module SWPPROCESS
 
 		! ARGUMENTS.
 		Type(StochParticle), Intent(IN)	:: sp      ! Particle for which to calculate the rate.
-		Real, Intent(IN)            :: chem(:) ! Current chemical conditions.
+		Real, Intent(IN)	            :: chem(:) ! Current chemical conditions.
         Type(Solution), Intent(IN)      :: soln    ! Solution to use.
         Type(Mechanism), Intent(IN)     :: mech    ! Mechanism used for rate calculation.
-		Integer, Intent(OUT)            :: flag   ! Error flag.
+		Integer, Intent(OUT)            :: flag	   ! Error flag.
 
 		! VARIABLES.
 		Integer :: i
@@ -595,7 +593,7 @@ Module SWPPROCESS
 		! ARGUMENTS.
 		Type(StochParticle), Intent(IN)	:: sp   ! Particle for which to calculate the rate.
         Type(Mechanism), Intent(IN)     :: mech ! Mechanism used for rate calculation.
-		Real, Intent(IN)            :: T    ! Current temperature (K).
+		Real, Intent(IN)	            :: T    ! Current temperature (K).
 
 		! VARIABLES.
         Real :: dS, So, tau
@@ -609,7 +607,7 @@ Module SWPPROCESS
                 tau = mech%SintParams(1) * T * (6.0E0 * sp%Properties(iV) / sp%Surface)**4 * exp(mech%SintParams(2) / T)
                 ParticleSinteringRate = (sp%Surface - So) / (dS * tau)
             Else
-    	    ParticleSinteringRate = 0.0E0
+    		    ParticleSinteringRate = 0.0E0
             End If
         Else
     		ParticleSinteringRate = 0.0E0
@@ -646,8 +644,8 @@ Module SWPPROCESS
 
 		! dM0/dt = Rincept - Rcoag + Rinflow - Routflow
 		mrates(0) = Sum(truerates(1:mech%InceptionCount)) - Sum(truerates(mech%ICG:mech%ICG+NCOAGTERMS-1))
-        If (soln%SolveInOut) Then
-        mrates(0) = mrates(0) + truerates(mech%IIN)
+        If (soln%SolveInOut > 0) Then
+	        mrates(0) = mrates(0) + truerates(mech%IIN)
             mrates(0) = mrates(0) - truerates(mech%IOUT)
         End If
         
@@ -664,21 +662,21 @@ Module SWPPROCESS
 		End Do
         If (N > 0) Then
             ! Surface reactions.
-	    Do i = 1, mech%ReactionCount
+		    Do i = 1, mech%ReactionCount
                 dx = Dble(SizeP(mech%Reactions(i)%dComp))
-		    mrates(1) = mrates(1) + (truerates(mech%ISR+i-1) * dx)
-		    mrates(2) = mrates(2) + (truerates(mech%ISR+i-1) * Sign(dx**2, dx))
-		    mrates(3) = mrates(3) + (truerates(mech%ISR+i-1) * Sign(dx**3, dx))
-		    mrates(4) = mrates(4) + (truerates(mech%ISR+i-1) * Sign(dx**4, dx))
-		    mrates(5) = mrates(5) + (truerates(mech%ISR+i-1) * Sign(dx**5, dx))
-	    End Do
+			    mrates(1) = mrates(1) + (truerates(mech%ISR+i-1) * dx)
+			    mrates(2) = mrates(2) + (truerates(mech%ISR+i-1) * Sign(dx**2, dx))
+			    mrates(3) = mrates(3) + (truerates(mech%ISR+i-1) * Sign(dx**3, dx))
+			    mrates(4) = mrates(4) + (truerates(mech%ISR+i-1) * Sign(dx**4, dx))
+			    mrates(5) = mrates(5) + (truerates(mech%ISR+i-1) * Sign(dx**5, dx))
+		    End Do
             ! Outflow.
-            If (soln%SolveInOut) Then
+            If (soln%SolveInOut > 0) Then
                 mean = Dble(sums(iV)) / Dble(N)
-	        mrates(1) = mrates(1) - (truerates(mech%IOUT) * mean)
-	        mrates(2) = mrates(2) - (truerates(mech%IOUT) * mean**2)
-	        mrates(3) = mrates(3) - (truerates(mech%IOUT) * mean**3)
-	        mrates(4) = mrates(4) - (truerates(mech%IOUT) * mean**4)
+		        mrates(1) = mrates(1) - (truerates(mech%IOUT) * mean)
+		        mrates(2) = mrates(2) - (truerates(mech%IOUT) * mean**2)
+		        mrates(3) = mrates(3) - (truerates(mech%IOUT) * mean**3)
+		        mrates(4) = mrates(4) - (truerates(mech%IOUT) * mean**4)
                 mrates(5) = mrates(5) - (truerates(mech%IOUT) * mean**5)
             End If
         End If
@@ -809,8 +807,8 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Integer, Intent(IN)          :: index    ! Index of process to perform.
-		Real, Intent(IN)          :: t, chem(:) ! Current time and chemical conditions.
+		Integer, Intent(IN)	          :: index	    ! Index of process to perform.
+		Real, Intent(IN)	          :: t, chem(:) ! Current time and chemical conditions.
         Type(Solution), Intent(INOUT) :: soln       ! Particle solution.
         Type(Mechanism), Intent(IN)   :: mech       ! Mechanism to use.
 		Integer, Intent(OUT)          :: flag       ! Error flag.
@@ -894,11 +892,11 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.	
-		Integer, Intent(IN)        :: i          ! Reaction being done.
-		Real, Intent(IN)        :: t, chem(:) ! Current time and chemical conditions.
+		Integer, Intent(IN)	        :: i          ! Reaction being done.
+		Real, Intent(IN)	        :: t, chem(:) ! Current time and chemical conditions.
         Type(Solution), Intent(INOUT) :: soln     ! Particle solution.
         Type(Mechanism), Intent(IN) :: mech       ! Mechanism to use.
-		Integer, Intent(OUT)        :: flag	  ! Error flag.
+		Integer, Intent(OUT)        :: flag		  ! Error flag.
 
 		! VARIABLES.
 		Integer				:: err
@@ -915,7 +913,7 @@ Module SWPPROCESS
 		If (AddParticle(soln%Ensemble, sp) >= 0) Then
 			! Update chemistry.
             If (CHEM_TYPE == VARIABLE_CHEM) Then
-		    Call UpdateChemistry(t, mech%Inceptions(i), 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
+			    Call UpdateChemistry(t, mech%Inceptions(i), 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
             End If
 		Else
 			! Failed to add particle to ensemble.
@@ -938,11 +936,11 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Integer, Intent(IN)        :: irxn       ! Reaction being done.
-		Real, Intent(IN)        :: t, chem(:) ! Current time and chemical conditions.
+		Integer, Intent(IN)	        :: irxn       ! Reaction being done.
+		Real, Intent(IN)	        :: t, chem(:) ! Current time and chemical conditions.
         Type(Solution), Intent(INOUT) :: soln     ! Particle solution.
         Type(Mechanism), Intent(IN) :: mech       ! Mechanism to use.
-		Integer, Intent(OUT)        :: flag	  ! Error flag.
+		Integer, Intent(OUT)        :: flag		  ! Error flag.
 
 		! VARIABLES.
 		Integer				:: i, err
@@ -1016,7 +1014,7 @@ Module SWPPROCESS
 
 					! Update chemistry.
                     If (CHEM_TYPE == VARIABLE_CHEM) Then
-				    Call UpdateChemistry(t, rxn, 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
+					    Call UpdateChemistry(t, rxn, 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
                     End If
 				Else
 					flag = FICTICIOUS_EVENT
@@ -1055,8 +1053,8 @@ Module SWPPROCESS
 		! ARGUMENTS.
 		! Rate indices controlling the weights used to 
 		! select particles from the ensemble.
-		Integer, Intent(IN)          :: rateID1, rateID2
-		Real, Intent(IN)          :: t, chem(:) ! Current time and chemical conditions.
+		Integer, Intent(IN)	          :: rateID1, rateID2
+		Real, Intent(IN)	          :: t, chem(:) ! Current time and chemical conditions.
         Type(Solution), Intent(INOUT) :: soln       ! Particle solution.
         Type(Mechanism), Intent(IN)   :: mech       ! Mechanism to use.
         Integer, Intent(IN)           :: maj        ! Majorant to use ID.
@@ -1117,7 +1115,7 @@ Module SWPPROCESS
 		! GET SECOND PARTICLE.
 		! ***********************************
 
-		i2  = i1
+		i2	  = i1
 		guard = 0
 
 		Do While (i2 == i1 .And. guard < 1000)
@@ -1193,23 +1191,23 @@ Module SWPPROCESS
 					flag = FICTICIOUS_EVENT
 				Else
                     If (mech%CoagRuleCount > 0) Then
-				    ! Coagulation (rule dependent).
+					    ! Coagulation (rule dependent).
                         Do i = 1, mech%CoagRuleCount
                             If (((sp1%TypeID == mech%CoagRules(i)%In1) .And. (sp2%TypeID == mech%CoagRules(i)%In2)) .Or. &
                                 ((sp1%TypeID == mech%CoagRules(i)%In2) .And. (sp2%TypeID == mech%CoagRules(i)%In1))) Then
                                 sp1old = sp1
-				            sp1 = Combine(sp1, sp2, mech)
+					            sp1 = Combine(sp1, sp2, mech)
                                 sp1%TypeID = mech%CoagRules(i)%Out
 
-				            If (ReplaceParticle(soln%Ensemble, i1, sp1) == 0) Then
-					            If (RemoveParticle(soln%Ensemble, i2) < 0) Then
-						            ! Failed to remove particle.
-						            flag = REMOVE_PARTICLE_ERR
+					            If (ReplaceParticle(soln%Ensemble, i1, sp1) == 0) Then
+						            If (RemoveParticle(soln%Ensemble, i2) < 0) Then
+							            ! Failed to remove particle.
+							            flag = REMOVE_PARTICLE_ERR
+						            End If
+					            Else
+						            ! Failed to store coagulated particle.
+						            flag = REPLACE_PARTICLE_ERR
 					            End If
-				            Else
-					            ! Failed to store coagulated particle.
-					            flag = REPLACE_PARTICLE_ERR
-				            End If
                                Exit
                             End If
                         End Do
@@ -1217,17 +1215,17 @@ Module SWPPROCESS
                     Else
                         ! No coagulation rules.
                         sp1old = sp1
-				    sp1 = Combine(sp1, sp2, mech)
+					    sp1 = Combine(sp1, sp2, mech)
 
-				    If (ReplaceParticle(soln%Ensemble, i1, sp1) == 0) Then
-					    If (RemoveParticle(soln%Ensemble, i2) < 0) Then
-						    ! Failed to remove particle.
-						    flag = REMOVE_PARTICLE_ERR
+					    If (ReplaceParticle(soln%Ensemble, i1, sp1) == 0) Then
+						    If (RemoveParticle(soln%Ensemble, i2) < 0) Then
+							    ! Failed to remove particle.
+							    flag = REMOVE_PARTICLE_ERR
+						    End If
+					    Else
+						    ! Failed to store coagulated particle.
+						    flag = REPLACE_PARTICLE_ERR
 					    End If
-				    Else
-					    ! Failed to store coagulated particle.
-					    flag = REPLACE_PARTICLE_ERR
-				    End If
                     End If
 				End If  
 			Else
@@ -1298,10 +1296,10 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN)	      :: t    ! Current time.
+		Real, Intent(IN)		      :: t    ! Current time.
         Type(Solution), Intent(INOUT) :: soln ! Solution to modify.
         Type(Mechanism), Intent(IN)   :: mech ! Mechanism to use.
-		Integer, Intent(OUT)      :: flag ! Error flag.
+		Integer, Intent(OUT)	      :: flag ! Error flag.
 
 		! VARIABLES.
         Real                :: N
@@ -1322,34 +1320,34 @@ Module SWPPROCESS
                 ! Remove the only particle in the system.
                 ! Note, it should be impossible to get here
                 ! if N==0 as the outflow rate contains N.
-	        If (RemoveParticle(soln%Ensemble, 1) < 0) Then
-		        flag = REMOVE_PARTICLE_ERR
-	        End If
+		        If (RemoveParticle(soln%Ensemble, 1) < 0) Then
+			        flag = REMOVE_PARTICLE_ERR
+		        End If
             End If
         ElseIf (OUTFLOW_METHOD == OUTFLOW_PARTICLE_METHOD) Then
             ! Actually remove a particle from the system, chosen
             ! uniformly.
-	    i = ChooseParticle(soln%Ensemble, 0)
+		    i = ChooseParticle(soln%Ensemble, 0)
 
-	    If (i < 0) Then
-		    ! Failed to choose a particle.
-		    flag = CHOOSE_PARTICLE_ERR
-	    Else
+		    If (i < 0) Then
+			    ! Failed to choose a particle.
+			    flag = CHOOSE_PARTICLE_ERR
+		    Else
                 If (GetParticle(soln%Ensemble, i, sp) < 0) Then
-		        ! Could not get details of chosen particle.
-		        flag = GET_PARTICLE_ERR
-	        Else
-		        ! Perform the deferred events in order to update
-		        ! the chemistry.
-		        If (SURF_ON .And. mech%AnyDeferred) Then
-			        Call UpdateDeferred(sp, t, soln, mech, flag)
-			        If (flag < 0) Return
-		        End If
+			        ! Could not get details of chosen particle.
+			        flag = GET_PARTICLE_ERR
+		        Else
+			        ! Perform the deferred events in order to update
+			        ! the chemistry.
+			        If (SURF_ON .And. mech%AnyDeferred) Then
+				        Call UpdateDeferred(sp, t, soln, mech, flag)
+				        If (flag < 0) Return
+			        End If
 
-	            If (RemoveParticle(soln%Ensemble, i) < 0) Then
-		            flag = REMOVE_PARTICLE_ERR
-	            End If
-	        End If
+		            If (RemoveParticle(soln%Ensemble, i) < 0) Then
+			            flag = REMOVE_PARTICLE_ERR
+		            End If
+		        End If
             End If
         End If
 	End Subroutine
@@ -1380,10 +1378,10 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN)	      :: t1, t2 ! Start and stop times of integration (s).
+		Real, Intent(IN)		      :: t1, t2 ! Start and stop times of integration (s).
         Type(Solution), Intent(INOUT) :: soln   ! Solution to modify.
         Type(Mechanism), Intent(IN)   :: mech   ! Mechanism to use.
-		Integer, Intent(OUT)      :: flag   ! Error flag.
+		Integer, Intent(OUT)	      :: flag   ! Error flag.
 
 		! VARIABLES.
 		Type(StochParticle) :: particles(soln%Ensemble%FirstSpace-1), sp
@@ -1495,7 +1493,7 @@ Module SWPPROCESS
 
 		! ARGUMENTS.
 		Type(StochParticle), Intent(INOUT) :: sp   ! Particle to update.
-		Real, Intent(IN)               :: t    ! Current time.
+		Real, Intent(IN)	               :: t    ! Current time.
         Type(Solution), Intent(INOUT)      :: soln ! Solution to modify.
         Type(Mechanism), Intent(IN)        :: mech ! Mechanism to use.
 		Integer, Intent(OUT)               :: flag ! Error flag.
@@ -1520,39 +1518,39 @@ Module SWPPROCESS
 			If (flag < 0) Return
 
             If (LPDA_TWO_LEVELS) Then
-		    rate = Abs(VolChangeRate(sp, chem, soln, mech, err))
+			    rate = Abs(VolChangeRate(sp, chem, soln, mech, err))
 
-		    If (rate > 1.0E-6) Then
-			    ! Take a step that does not change the
-			    ! particle volume by more than about 10%.
-			    dt = sp%Properties(iV) * 0.1E0 / rate
+			    If (rate > 1.0E-6) Then
+				    ! Take a step that does not change the
+				    ! particle volume by more than about 10%.
+				    dt = sp%Properties(iV) * 0.1E0 / rate
 
-			    If (dt > 5.0E0 * DataSpacing(soln%Chemistry, sp%LastUpdate)) Then
-				    dt = 5.0E0 * DataSpacing(soln%Chemistry, sp%LastUpdate)
+				    If (dt > 5.0E0 * DataSpacing(soln%Chemistry, sp%LastUpdate)) Then
+					    dt = 5.0E0 * DataSpacing(soln%Chemistry, sp%LastUpdate)
+				    End If
+			    Else
+				    ! If the volume change rate is approximately
+				    ! 0, either due to nothing much happening or
+				    ! lots of things cancelling each other out
+				    ! take a small step.
+				    dt = DataSpacing(soln%Chemistry, sp%LastUpdate)
 			    End If
-		    Else
-			    ! If the volume change rate is approximately
-			    ! 0, either due to nothing much happening or
-			    ! lots of things cancelling each other out
-			    ! take a small step.
-			    dt = DataSpacing(soln%Chemistry, sp%LastUpdate)
-		    End If
 
-		    ! Also check that the time step does not go past stop_time and truncate
-		    ! if this is a problem.  In the case of truncation it is important that
-		    ! stop_time is assigned to spart%last_update in such a way as to ensure
-		    ! the test at the top of the loop will return false when it is next
-		    ! evaluated.  This should not be a problem if they are both of the same
-		    ! precision.
-		    If (t - sp%LastUpdate < dt) Then
+			    ! Also check that the time step does not go past stop_time and truncate
+			    ! if this is a problem.  In the case of truncation it is important that
+			    ! stop_time is assigned to spart%last_update in such a way as to ensure
+			    ! the test at the top of the loop will return false when it is next
+			    ! evaluated.  This should not be a problem if they are both of the same
+			    ! precision.
+			    If (t - sp%LastUpdate < dt) Then
+				    dt = t - sp%LastUpdate
+				    sp%LastUpdate = t
+			    Else
+				    sp%LastUpdate = sp%LastUpdate + dt
+			    End If
+            Else
 			    dt = t - sp%LastUpdate
 			    sp%LastUpdate = t
-		    Else
-			    sp%LastUpdate = sp%LastUpdate + dt
-		    End If
-            Else
-		    dt = t - sp%LastUpdate
-		    sp%LastUpdate = t
             End If
 
 			! Now calculate the number of each event and perform them.  Check
@@ -1576,12 +1574,12 @@ Module SWPPROCESS
 							Call DeferredSurface(t, i, sp, num, soln, mech, &
                                                  SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
 
-					    If (flag < 0) Then
-						    Return
-					    Else
-						    soln%ProcessCounter(mech%ISR+i-1) = &
+						    If (flag < 0) Then
+							    Return
+						    Else
+							    soln%ProcessCounter(mech%ISR+i-1) = &
                                 soln%ProcessCounter(mech%ISR+i-1) + num
-					    End If
+						    End If
 						End If
 					End If
 				End If
@@ -1620,10 +1618,10 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN)               :: t     ! Current flow time (s).
-		Integer, Intent(IN)               :: i      ! The surface reaction being performed.
+		Real, Intent(IN)	               :: t	     ! Current flow time (s).
+		Integer, Intent(IN)	               :: i      ! The surface reaction being performed.
 		Type(StochParticle), Intent(INOUT) :: sp     ! The particle to update.
-		Integer, Intent(IN)               :: repeat ! The number of times to apply this reaction.
+		Integer, Intent(IN)	               :: repeat ! The number of times to apply this reaction.
         Type(Solution), Intent(INOUT)      :: soln   ! Solution to modify.
         Type(Mechanism), Intent(IN)        :: mech   ! Mechanism to use.
         Real, Intent(IN)                   :: vol    ! Current sample volume.
@@ -1637,7 +1635,7 @@ Module SWPPROCESS
                                       mech%Reactions(i)%dSID, mech)
 
 		If (SizeP(sp) > 0.0E0) Then
-	    sp%TypeID = mech%Reactions(i)%PTypeOut
+		    sp%TypeID = mech%Reactions(i)%PTypeOut
             sp%Track  = sp%Track + (mech%Reactions(i)%dTrack * Real(repeat))
         ElseIf (SizeP(sp) < 0.0E0) Then
             Print *, "waaah!"
@@ -1645,7 +1643,7 @@ Module SWPPROCESS
 
 		! Update chemistry.
         If (CHEM_TYPE == VARIABLE_CHEM) Then
-	    Call UpdateChemistry(t, mech%Reactions(i), repeat, soln%Chemistry, vol, flag)
+		    Call UpdateChemistry(t, mech%Reactions(i), repeat, soln%Chemistry, vol, flag)
         End If
 	End Subroutine
 	
@@ -1669,12 +1667,12 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN)		  :: t      ! Time of the change (s).
-		Type(Inception), Intent(IN)  :: rxn  ! The inception being performed.
-		Integer, Intent(IN)		  :: repeat ! The number of times to perform the update.
+		Real, Intent(IN)			  :: t      ! Time of the change (s).
+		Type(Inception), Intent(IN)	  :: rxn	  ! The inception being performed.
+		Integer, Intent(IN)			  :: repeat ! The number of times to perform the update.
         Type(ChemData), Intent(INOUT) :: chem   ! Chemistry to modify.
-		Real, Intent(IN)		  :: volume ! Current sample volume.
-		Integer, Intent(OUT)	  :: flag   ! Error flag.
+		Real, Intent(IN)			  :: volume ! Current sample volume.
+		Integer, Intent(OUT)		  :: flag   ! Error flag.
 
 		! VARIABLES.
 		Integer :: i
@@ -1684,17 +1682,17 @@ Module SWPPROCESS
 		flag = 0
 
         If (CHEM_TYPE == VARIABLE_CHEM) Then
-	    ! Calculate the scaling from ensemble level to molar
-	    ! concentration level.
-	    scale = Real(repeat) / (volume * NA)
+		    ! Calculate the scaling from ensemble level to molar
+		    ! concentration level.
+		    scale = Real(repeat) / (volume * NA)
 
-	    ! Update chemistry accordingly.
-	    Do i = 1, rxn%NREAC
-		    Call ChangeChem(chem, t, rxn%Species(i), - rxn%Stoich(i) * scale)
-	    End Do
-	    Do i = rxn%NREAC + 1, rxn%NREAC + rxn%NPROD
-		    Call ChangeChem(chem, t, rxn%Species(i), + rxn%Stoich(i) * scale)
-	    End Do
+		    ! Update chemistry accordingly.
+		    Do i = 1, rxn%NREAC
+			    Call ChangeChem(chem, t, rxn%Species(i), - rxn%Stoich(i) * scale)
+		    End Do
+		    Do i = rxn%NREAC + 1, rxn%NREAC + rxn%NPROD
+			    Call ChangeChem(chem, t, rxn%Species(i), + rxn%Stoich(i) * scale)
+		    End Do
         End If
 	End Subroutine
 	
@@ -1712,12 +1710,12 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN)		  :: t      ! Time of the change (s).
+		Real, Intent(IN)			  :: t      ! Time of the change (s).
 		Type(Reaction), Intent(IN)    :: rxn	! The reaction being performed.
-		Integer, Intent(IN)		  :: repeat ! The number of times to perform the update.
+		Integer, Intent(IN)			  :: repeat ! The number of times to perform the update.
         Type(ChemData), Intent(INOUT) :: chem   ! Chemistry to modify.
-		Real, Intent(IN)		  :: volume ! Current sample volume.
-		Integer, Intent(OUT)	  :: flag   ! Error flag.
+		Real, Intent(IN)			  :: volume ! Current sample volume.
+		Integer, Intent(OUT)		  :: flag   ! Error flag.
 
 		! VARIABLES.
 		Integer :: i
@@ -1727,17 +1725,17 @@ Module SWPPROCESS
 		flag = 0
 
         If (CHEM_TYPE == VARIABLE_CHEM) Then
-	    ! Calculate the scaling from ensemble level to molar
-	    ! concentration level.
-	    scale = Real(repeat) / (volume * NA)
+		    ! Calculate the scaling from ensemble level to molar
+		    ! concentration level.
+		    scale = Real(repeat) / (volume * NA)
 
-	    ! Update chemistry accordingly.
-	    Do i = 1, rxn%NREAC
-		    Call ChangeChem(chem, t, rxn%Species(i), - rxn%Stoich(i) * scale)
-	    End Do
-	    Do i = rxn%NREAC + 1, rxn%NREAC + rxn%NPROD
-		    Call ChangeChem(chem, t, rxn%Species(i), + rxn%Stoich(i) * scale)
-	    End Do
+		    ! Update chemistry accordingly.
+		    Do i = 1, rxn%NREAC
+			    Call ChangeChem(chem, t, rxn%Species(i), - rxn%Stoich(i) * scale)
+		    End Do
+		    Do i = rxn%NREAC + 1, rxn%NREAC + rxn%NPROD
+			    Call ChangeChem(chem, t, rxn%Species(i), + rxn%Stoich(i) * scale)
+		    End Do
         End If
 	End Subroutine
 
@@ -1755,12 +1753,12 @@ Module SWPPROCESS
 		Implicit None
 
 		! ARGUMENTS.
-		Real, Intent(IN)		  :: t       ! Time of the change (s).
-		Type(Reaction), Intent(IN)    :: rxn ! The reaction being performed.
-		Integer, Intent(IN)		  :: repeat  ! The number of times to perform the update.
+		Real, Intent(IN)			  :: t       ! Time of the change (s).
+		Type(Reaction), Intent(IN)    :: rxn	 ! The reaction being performed.
+		Integer, Intent(IN)			  :: repeat  ! The number of times to perform the update.
         Real, Intent(INOUT)           :: chem(:) ! Chemistry to modify.
-		Real, Intent(IN)		  :: volume  ! Current sample volume.
-		Integer, Intent(OUT)	  :: flag    ! Error flag.
+		Real, Intent(IN)			  :: volume  ! Current sample volume.
+		Integer, Intent(OUT)		  :: flag    ! Error flag.
 
 		! VARIABLES.
 		Integer :: i
@@ -1770,17 +1768,17 @@ Module SWPPROCESS
 		flag = 0
 
         If (CHEM_TYPE == VARIABLE_CHEM) Then
-	    ! Calculate the scaling from ensemble level to molar
-	    ! concentration level.
-	    scale = Real(repeat) / (volume * NA)
+		    ! Calculate the scaling from ensemble level to molar
+		    ! concentration level.
+		    scale = Real(repeat) / (volume * NA)
 
-	    ! Update chemistry accordingly.
-	    Do i = 1, rxn%NREAC
+		    ! Update chemistry accordingly.
+		    Do i = 1, rxn%NREAC
                 chem(rxn%Species(i)) = Max(0.0E0, chem(rxn%Species(i)) - (rxn%Stoich(i) * scale))
-	    End Do
-	    Do i = rxn%NREAC + 1, rxn%NREAC + rxn%NPROD
+		    End Do
+		    Do i = rxn%NREAC + 1, rxn%NREAC + rxn%NPROD
                 chem(rxn%Species(i)) = chem(rxn%Species(i)) + (rxn%Stoich(i) * scale)
-	    End Do
+		    End Do
         End If
 	End Subroutine
 End Module

@@ -551,10 +551,8 @@ Module SWPMECH_READER
                     If (has_key(attributes, "id")) Then
                         Call get_value(attributes, "id", id, stat)
                         m_mech%Reactions(jRxn)%Species(m_mech%Reactions(jRxn)%NREAC)     = IndexOf(id, m_spnames)
-                        m_mech%Reactions(jRxn-1)%Species(m_mech%Reactions(jRxn-1)%NREAC) = &
-                        m_mech%Reactions(jRxn)%Species(m_mech%Reactions(jRxn)%NREAC)
-                        m_mech%Reactions(jRxn-2)%Species(m_mech%Reactions(jRxn-2)%NREAC) = &
-                        m_mech%Reactions(jRxn)%Species(m_mech%Reactions(jRxn)%NREAC)
+                        m_mech%Reactions(jRxn-1)%Species(m_mech%Reactions(jRxn-1)%NREAC) = m_mech%Reactions(jRxn)%Species(m_mech%Reactions(jRxn)%NREAC)
+                        m_mech%Reactions(jRxn-2)%Species(m_mech%Reactions(jRxn-2)%NREAC) = m_mech%Reactions(jRxn)%Species(m_mech%Reactions(jRxn)%NREAC)
                     Else
                         m_mech%Reactions(jRxn)%Species(m_mech%Reactions(jRxn)%NREAC)     = 0
                         m_mech%Reactions(jRxn-1)%Species(m_mech%Reactions(jRxn-1)%NREAC) = 0
@@ -565,10 +563,8 @@ Module SWPMECH_READER
                     If (has_key(attributes, "stoich")) Then
                         Call get_value(attributes, "stoich", str, stat)
                         m_mech%Reactions(jRxn)%Stoich(m_mech%Reactions(jRxn)%NREAC)     = CReal(str, 1.0E0)
-                        m_mech%Reactions(jRxn-1)%Stoich(m_mech%Reactions(jRxn-1)%NREAC) = &
-                        m_mech%Reactions(jRxn)%Stoich(m_mech%Reactions(jRxn)%NREAC)
-                        m_mech%Reactions(jRxn-2)%Stoich(m_mech%Reactions(jRxn-2)%NREAC) = &
-                        m_mech%Reactions(jRxn)%Stoich(m_mech%Reactions(jRxn)%NREAC)
+                        m_mech%Reactions(jRxn-1)%Stoich(m_mech%Reactions(jRxn-1)%NREAC) = m_mech%Reactions(jRxn)%Stoich(m_mech%Reactions(jRxn)%NREAC)
+                        m_mech%Reactions(jRxn-2)%Stoich(m_mech%Reactions(jRxn-2)%NREAC) = m_mech%Reactions(jRxn)%Stoich(m_mech%Reactions(jRxn)%NREAC)
                     Else
                         m_mech%Reactions(jRxn-2)%Stoich(m_mech%Reactions(jRxn-2)%NREAC) = 1.0E0
                         m_mech%Reactions(jRxn-1)%Stoich(m_mech%Reactions(jRxn-1)%NREAC) = 1.0E0

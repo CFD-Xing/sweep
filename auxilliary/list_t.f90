@@ -406,7 +406,7 @@ End Module
 ! =======================================================
 
 Module LIST_T
-    Use LIST_DP_T, only: LIST_DP, Add, AddItems, Operator(+)
+    Use LIST_DP_T
     Use LIST_INT_T
     Implicit None
     Public
