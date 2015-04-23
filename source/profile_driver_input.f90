@@ -103,8 +103,11 @@ Module Profile_Driver_Input
         Character(LEN=128) :: arg
 
         ! EXECUTABLE CODE.
-!        N = NARGS()
-        N = 1
+#ifdef __GNUC__
+        N = IARGC()
+#else
+        N = NARGS()
+#endif
         i = 1
 
         Do While (i <= N)
