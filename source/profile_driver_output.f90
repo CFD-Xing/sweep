@@ -88,7 +88,7 @@ Module Profile_Driver_Output
         Inquire(UNIT=UOUT, OPENED=o)
 
         If (o == .False.) Then
-		Open(UNIT=UOUT, FILE=Trim(file)//"("//Trim(CStr(run))//").dat", FORM="UNFORMATTED", &
+		Open(UNIT=UOUT, FILE=Trim(file)//"_"//Trim(CStr(run))//".dat", FORM="UNFORMATTED", &
 		     STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
              If (flag /= 0) flag = -1
         Else
@@ -176,7 +176,7 @@ Module Profile_Driver_Output
         er = 0.0D0
 
         Do irun = 1, runs
-		    Open(UNIT=UOUT, FILE=Trim(file)//"("//Trim(CStr(irun))//").dat", FORM="UNFORMATTED", &
+		    Open(UNIT=UOUT, FILE=Trim(file)//"_"//Trim(CStr(irun))//".dat", FORM="UNFORMATTED", &
 		         STATUS="OLD", ACTION="READ", IOSTAT=flag)
 
             If (flag /= 0) Then
@@ -260,7 +260,7 @@ Module Profile_Driver_Output
                             stats(NSTATS)
 
         ! EXECUTABLE CODE.
-		Open(UNIT=UPSL, FILE=Trim(file)//"("//Trim(CStr(run))//")-psl("//Trim(CStr(num))//").dat", &
+		Open(UNIT=UPSL, FILE=Trim(file)//"_"//Trim(CStr(run))//"-psl_"//Trim(CStr(num))//".dat", &
              FORM="UNFORMATTED", STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
         stats = GetStats(soln, GetTemperature(soln%Chemistry, t, t), range)
         psl = CompilePSL(soln%Ensemble)
@@ -300,14 +300,14 @@ Module Profile_Driver_Output
             M0  = 0.0D0
             psl = 0.0D0
             Do irun = 1, runs
-		        Open(UNIT=UPSL, FILE=Trim(file)//"("//Trim(CStr(irun))//")-psl("//Trim(CStr(inum))//").dat", &
+		        Open(UNIT=UPSL, FILE=Trim(file)//"_"//Trim(CStr(irun))//"-psl_"//Trim(CStr(inum))//".dat", &
                      FORM="UNFORMATTED", STATUS="OLD", ACTION="READ", IOSTAT=flag)
                 Read(UPSL) M0(irun), psl(:,:,irun), pcl(:,:,irun)
                 Close(UPSL, IOSTAT=flag)
             End Do
 
             ! Write PSL to CSV file.
-		    Open(UNIT=UPSL, FILE=Trim(file)//"-psl("//Trim(CStr(inum))//").csv", &
+		    Open(UNIT=UPSL, FILE=Trim(file)//"-psl_"//Trim(CStr(inum))//".csv", &
                  FORM="FORMATTED", STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
 !            Write(UPSL, FMT=M0FMT) M0(1:runs)
 !            Write(UPSL, FMT=AFMT) ("v", "s", "d", i=1, runs)
