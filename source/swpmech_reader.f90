@@ -940,7 +940,7 @@ Module SWPMECH_READER
 
         ! EXECUTABLE CODE.
         Call SlipFlowK(m_d(1), m_d(2), m_mech%Inceptions(i)%ksf1, m_mech%Inceptions(i)%ksf2)
-        m_mech%Inceptions(i)%kfm = FreeMolK(m_d(1), m_d(2), m_m(1), m_m(2))
+        m_mech%Inceptions(i)%kfm = 2.5E0/2.2E0*FreeMolK(m_d(1), m_d(2), m_m(1), m_m(2))
         m_mech%Inceptions(i)%A   = m_mech%Inceptions(i)%A * 0.5E0
         m_mech%Inceptions(i)%dS  = EquivSphereSurface(m_mech%Inceptions(i)%dComp, &
                                                       m_mech%Components, m_mech%ComponentCount)

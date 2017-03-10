@@ -309,8 +309,8 @@ Module SWPPROCESS
 			! Kernel is harmonic mean of free-molecular and slip-flow.  Remember
 			! to scale the inception rates to give the number of inception events
             ! in the sample volume, instead of per unit volume.
-!			InceptionRates(i) = mech%Inceptions(i)%A * fm * vol
-			InceptionRates(i) = mech%Inceptions(i)%A * HalfHarmonicMean(fm, sf) * vol
+			InceptionRates(i) = mech%Inceptions(i)%A * fm * vol
+!			InceptionRates(i) = mech%Inceptions(i)%A * HalfHarmonicMean(fm, sf) * vol
 !   			InceptionRates(i) = 2.0E12 * sqrtT * vol * NA
 
 			! Chemical species terms.

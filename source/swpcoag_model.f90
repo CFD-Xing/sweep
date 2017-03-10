@@ -87,11 +87,13 @@ Module SWPCOAG_MODEL
 	Real, Parameter, Public  :: E_fm = 2.2E0
 
 	! Free-molecular kernel constant (need to multiply by T^1/2).
-	Real, Parameter, Public  :: C_fm = 3.23990504E-8
+!	Real, Parameter, Public  :: C_fm = 3.23990504E-8
 !	Real, Parameter, Public	 :: C_fm = E_fm	* Sqrt(KB * PI / 2.0)
+	Real, Parameter, Public	 :: C_fm = E_fm	* Sqrt(1.3807E-16 * 3.1415926535897932384626433832795E0 / 2.0)
 
 	! Free-molecular majorant factor for coagulation kernel .
 	Real, Parameter, Public  :: C_fmmaj	= 1.4178E0
+!	Real, Parameter, Public  :: C_fmmaj	= 1.E0
 
 	! Slip-flow kernel constant.
 	Real, Parameter, Public  :: C_sf = 9.2046667E-17
@@ -135,6 +137,7 @@ Module SWPCOAG_MODEL
 				fm = FreeMolKernel(sp1, sp2, T, P, .False.)
 				sf = SlipFlowKernel(sp1, sp2, T, P, .False.)
 				k  = HalfHarmonicMean(fm, sf)
+                                k = fm
 !                k = 1.0E0
 			Case (SLIPMAJ)
 				k  = SlipFlowKernel(sp1, sp2, T, P, .True.)
