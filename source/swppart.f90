@@ -581,6 +581,7 @@ Module SWPPART
 		! EXECUTABLE CODE.
         If (Sum(sp%Components) > 0) Then
 		    sp%Properties(iAS)		= sp%ActSurf * sp%Surface
+		    sp%Properties(iS)		= sp%Surface
             sp%Properties(iD)       = CollisionDiameter(sp, mech)
 		    sp%Properties(iD2)	    = sp%Properties(iD) * sp%Properties(iD)
 		    sp%Properties(iD_1)	    = 1.0E0 / sp%Properties(iD)
