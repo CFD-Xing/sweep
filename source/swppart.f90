@@ -483,15 +483,17 @@ Module SWPPART
         ElseIf (mech%ParticleModel == SURFACE_VOLUME_MODEL) Then
             Select Case (rid) 
                 Case (GROWTH_RADIUS)
-                    sp%Surface = sp%Surface + (2.0 * dvol / GrowthRadius(sp%Surface))
+                !    sp%Surface = sp%Surface + (2.0 * dvol / GrowthRadius(sp%Surface))
+                    sp%Surface = sp%Surface + 2.0/3.0* (1.0/36.0/3.14)**(-0.2043) * dvol * vold**(2.0*0.2043-1) * sp%Surface**(-0.2043*3.0+1)
                 Case (OXIDATION_RADIUS)
-                    sp%Surface = sp%Surface + (2.0 * dvol / OxidationRadius(vold, sp%Surface))
+               !      sp%Surface = sp%Surface + (2.0 * dvol / OxidationRadius(vold, sp%Surface))
+                    sp%Surface = sp%Surface + 2.0/3.0 * dvol / vold * sp%Surface
                 Case (EQUIV_SPHERE_DIAMETER)
                     sp%Surface = sp%Surface + (4.0 * dvol / EquivSphereDiameter(vold))
                 Case (COLLISION_DIAMETER)
                     sp%Surface = sp%Surface + (4.0 * dvol / CollisionDiameter(vold, sp%Surface, mech))
             End Select
-            sp%Surface = Max(sp%Surface, ssph)
+          !  sp%Surface = Max(sp%Surface, ssph)
         End If
 
         ! Recalc properties.

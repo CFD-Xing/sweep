@@ -60,7 +60,7 @@ Module SWPPARAMS
     Integer, Parameter :: MAXGRPS = 403 ! Max number of reaction groups.
 
 	! Flags to switch processes on and off.
-	Logical, Parameter :: COAG_ON = .True.  ! Coagulation.
+	Logical, Parameter :: COAG_ON = .False.  ! Coagulation.
 	Logical, Parameter :: SINT_ON = .False. ! Sintering.
 	Logical, Parameter :: SURF_ON = .True.  ! Surface reactions.
 
