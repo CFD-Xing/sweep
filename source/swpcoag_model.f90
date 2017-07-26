@@ -137,6 +137,7 @@ Module SWPCOAG_MODEL
 				fm = FreeMolKernel(sp1, sp2, T, P, .False.)
 				sf = SlipFlowKernel(sp1, sp2, T, P, .False.)
 				k  = HalfHarmonicMean(fm, sf)
+                                ! BF - IF fm regime
                                 k = fm
 !                k = 1.0E0
 			Case (SLIPMAJ)
@@ -355,7 +356,7 @@ Module SWPCOAG_MODEL
 		Real, Intent(OUT) :: k1, k2, k3 ! Condensations terms.
 
 		! EXECUTABLE CODE.
-        k3 = C_fm / Sqrt(m)
+        k3 = 1.3/2.0 * C_fm / Sqrt(m)
         k2 = d * k3 * 2.0 ! * 1.13 (A4 shape corrections).
         k1 = d * k2 / 2.0 ! * 1.28 = 1.13 * 1.13
 	End Subroutine

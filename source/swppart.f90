@@ -493,7 +493,7 @@ Module SWPPART
                 Case (COLLISION_DIAMETER)
                     sp%Surface = sp%Surface + (4.0 * dvol / CollisionDiameter(vold, sp%Surface, mech))
             End Select
-          !  sp%Surface = Max(sp%Surface, ssph)
+            sp%Surface = Max(sp%Surface, ssph)
         End If
 
         ! Recalc properties.
@@ -1147,7 +1147,8 @@ Module SWPPART
         stats(iMass)    = Dble(sp%Properties(iM))
         stats(iV)       = Dble(sp%Properties(iV))
 		stats(iSurf)    = Dble(sp%Surface)
-		stats(iActSurf) = Dble(sp%ActSurf)
+!		stats(iActSurf) = Dble(sp%ActSurf)
+		stats(iActSurf) = Dble(sp%Surface)**(3.0D0/2.0D0)
 		stats(iDiam)    = Dble(sp%Properties(iD))
 	End Function
 

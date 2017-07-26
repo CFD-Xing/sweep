@@ -118,6 +118,7 @@ Module SWPCOAG
 		    ! Select which coagulation majorant to use.
 		    sf = Sum(CoagRateTerms(1:4))
 		    fm = Sum(CoagRateTerms(5:7))
+                    ! BF-If free-molecular regime
                     fm = 0.0d0
 		    If (sf > 0.0E0 .Or. fm > 0.0E0) Then
 			    ! There is some coagulation.
