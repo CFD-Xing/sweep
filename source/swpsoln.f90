@@ -252,8 +252,10 @@ Module SWPSOLN
 		Implicit None
         Type(Solution), Intent(IN) :: soln
 		Real, Intent(IN) :: T	! Temperature (K).
-		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume
+!		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume
 !		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume * T / soln%BaseTemperature
+! MIN DENSITY IS THE REF VALUE
+		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume / T * 0.000202418
 	End Function
 
 	! -------------------------------------------------------

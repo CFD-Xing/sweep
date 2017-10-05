@@ -105,7 +105,7 @@ Module Profile_Driver_Output
         !   writes some values to the console.
 
         Use Sweep
-        Use SWPCHEM, only: GetTemperature
+        Use SWPCHEM, only: GetTemperature,GetRho
         Use SWPSTATS_INDICES
         Use ConsoleTable
         Implicit None
@@ -125,7 +125,8 @@ Module Profile_Driver_Output
         ! EXECUTABLE CODE.
         flag = 0
         
-        stats = GetStats(soln, GetTemperature(soln%Chemistry, Real(t), Real(t)), range)
+      !  stats = GetStats(soln, GetTemperature(soln%Chemistry, Real(t), Real(t)), range)
+        stats = GetStats(soln, GetRho(soln%Chemistry, Real(t), Real(t)), range)
         rates = Dble(SweepRateTerms(Real(t), GetSweepChem(soln%Chemistry, Real(t), Real(t), err), soln, mech, flag))
 
         Call PrintScientificD(N, (/Dble(t), stats(iSP), stats(iM0), stats(iM1), stats(iSurf), stats(iDiam)/), 6)
@@ -239,7 +240,7 @@ Module Profile_Driver_Output
         !   writes some values to the console.
 
         Use Sweep
-        Use SWPCHEM, only: GetTemperature
+        Use SWPCHEM, only: GetTemperature,GetRho
         Use SWPSTATS_INDICES
         Use StrConv
         Implicit None
@@ -262,7 +263,8 @@ Module Profile_Driver_Output
         ! EXECUTABLE CODE.
 		Open(UNIT=UPSL, FILE=Trim(file)//"_"//Trim(CStr(run))//"-psl_"//Trim(CStr(num))//".dat", &
              FORM="UNFORMATTED", STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
-        stats = GetStats(soln, GetTemperature(soln%Chemistry, t, t), range)
+       ! stats = GetStats(soln, GetTemperature(soln%Chemistry, t, t), range)
+        stats = GetStats(soln, GetRho(soln%Chemistry, t, t), range)
         psl = CompilePSL(soln%Ensemble)
         pcl = CompilePCL(soln%Ensemble, mech)
         Write(UPSL) stats(iM0), psl, pcl

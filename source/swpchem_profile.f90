@@ -314,6 +314,42 @@ Module SWPCHEM
 		End If
 	End Function
 
+
+	! -------------------------------------------------------
+
+	Real Function GetRho(chem, t, actualTime)
+		! DESCRIPTION:
+		!	Gets the density at the given time.
+        ! RETURNS:
+        !   Temperature at time t.
+
+		Implicit None
+
+		! ARGUMENTS.
+        Type(ChemData), Intent(IN) :: chem       ! Data from which to get chemistry.
+		Real, Intent(IN)           :: t          ! Time for which to get chemical conditions.
+        Real, Intent(IN)           :: actualTime ! Actual simulation time.
+
+		! VARIABLES.
+		Integer :: i, j
+
+		! EXECUTABLE CODE.
+		i = FindTime(t, chem%Times, chem%NPOINTS)
+		
+		If (i < chem%NPOINTS) Then
+            ! Perform linear interpolation between the
+            ! two bounding data points.
+			j = i + 1
+			GetRho = chem%Chem(chem%Shared%iRho,i) + ((chem%Chem(chem%Shared%iRho,j) - chem%Chem(chem%Shared%iRho,i)) * (t - chem%Times(i)) / &
+												            (chem%Times(j) - chem%Times(i)))
+		Else
+            ! This is the last data point, and we don't do
+            ! extrapolation.
+			GetRho = chem%Chem(chem%Shared%iRho,i)
+		End If
+	End Function
+
+
 	! -------------------------------------------------------
 
 	Integer Function FindTime(t, times, N)

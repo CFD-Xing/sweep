@@ -23,7 +23,7 @@ all:    profile_driver_program.o profile_driver_input.o profile_driver_output.o 
 	flib_sax.o m_buffer.o m_charset.o m_converters.o m_debug.o m_dictionary.o m_elstack.o m_entities.o m_fsm.o \
 	m_io.o m_reader.o m_xml_error.o m_xml_parser.o
 
-	$(f90) -r8 -o bin_sect/sweep_nocoag_trung.x profile_driver_program.o profile_driver_input.o profile_driver_output.o \
+	$(f90) -r8 -o bin_sect/sweep_aggregation_rho_trung.x profile_driver_program.o profile_driver_input.o profile_driver_output.o \
 	strconv.o contable.o settings_file_reader.o list_t.o \
 	swpensemble.o swpcoag.o swpcoag_model.o swpstats.o swperr.o swpchem.o swpmech.o swpmech_types.o mt19937.o \
 	swppart.o swpchem_shared.o swpparams.o swpstep.o sweep.o swprng.o swpprocess.o swpsoln.o swpmech_reader.o \

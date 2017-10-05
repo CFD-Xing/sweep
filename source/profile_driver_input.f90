@@ -79,7 +79,7 @@ Module Profile_Driver_Input
         Integer :: NVARS=0, NPOINTS=0
         Character(LEN=16), Pointer :: Header(:)
         Real, Pointer :: Times(:), Chem(:,:)
-        Integer :: iT=0, iP=0, iA=0
+        Integer :: iT=0, iP=0, iA=0, iRho=0
     End Type
 
     Contains
@@ -334,6 +334,7 @@ Module Profile_Driver_Input
         chem%iT = IndexOf("T", chem%Header)
         chem%iP = IndexOf("P", chem%Header)
         chem%iA = IndexOf("Alpha", chem%Header)
+        chem%iRho = IndexOf("rho", chem%Header)
 
         If (chem%iA == 0) Then
             ! No Alpha in profile.

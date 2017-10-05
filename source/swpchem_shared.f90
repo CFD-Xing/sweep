@@ -68,7 +68,7 @@ Module SWPCHEM_SHARED
 
     Type SharedChemData
         Integer :: NCHEM, NCHEMEXT        ! Counts.
-        Integer :: iT, iP, iAlpha, iRad   ! Useful indices in chemistry arrays.
+        Integer :: iT, iP, iAlpha, iRad,iRho   ! Useful indices in chemistry arrays.
 	    Integer :: iH2, iH, iA4, iC2H2, & ! Species required for radical
                    iOH, iO2, iCO, iH2O    ! site fraction calculation.
     End Type
@@ -126,6 +126,7 @@ Module SWPCHEM_SHARED
         chem%NCHEMEXT = chem%NCHEM
 		chem%iT	      = nsp + 1
 		chem%iP		  = nsp + 2
+                chem%iRho = IndexOf("rho", speciesNames)
 
         If (mech%UseHACA) Then
             If (mech%ActSurfModel == ACT_SURF_PROFILE) Then

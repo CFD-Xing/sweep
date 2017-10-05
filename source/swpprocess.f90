@@ -165,7 +165,8 @@ Module SWPPROCESS
 		! Get required system properties.
 		N	 = ParticleCount(soln%Ensemble)
 		sums = GetParticleSums(soln%Ensemble)
-        vol  = SampleVolume(soln, chem(soln%Chemistry%Shared%iT))
+!        vol  = SampleVolume(soln, chem(soln%Chemistry%Shared%iT))
+        vol  = SampleVolume(soln, chem(soln%Chemistry%Shared%iRho))
 		
         ! Calculate inception rates (note: inception cannot be switched off).
 		RateTerms(1:mech%InceptionCount) = InceptionRates(chem, vol, soln, mech, err)
@@ -263,7 +264,8 @@ Module SWPPROCESS
 		    End Do
         End If
 
-        GroupedRateTerms = GroupedRateTerms / SampleVolume(soln, chem(soln%Chemistry%Shared%iT))
+!        GroupedRateTerms = GroupedRateTerms / SampleVolume(soln, chem(soln%Chemistry%Shared%iT))
+        GroupedRateTerms = GroupedRateTerms / SampleVolume(soln, chem(soln%Chemistry%Shared%iRho))
 	End Function
 
 	! -------------------------------------------------------
@@ -719,7 +721,8 @@ Module SWPPROCESS
 
         ! Get prerequisite values.
         sums = GetParticleSums(soln%Ensemble)
-        vol  = SampleVolume(soln, chem(soln%Chemistry%Shared%iT))
+       ! vol  = SampleVolume(soln, chem(soln%Chemistry%Shared%iT))
+        vol  = SampleVolume(soln, chem(soln%Chemistry%Shared%iRho))
 
         ! Get the inception and surface rates.
         pr(1:mech%InceptionCount)  = InceptionRates(chem, vol, soln, mech, err)
@@ -913,7 +916,8 @@ Module SWPPROCESS
 		If (AddParticle(soln%Ensemble, sp) >= 0) Then
 			! Update chemistry.
             If (CHEM_TYPE == VARIABLE_CHEM) Then
-			    Call UpdateChemistry(t, mech%Inceptions(i), 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
+			   ! Call UpdateChemistry(t, mech%Inceptions(i), 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
+			    Call UpdateChemistry(t, mech%Inceptions(i), 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iRho)), flag)
             End If
 		Else
 			! Failed to add particle to ensemble.
@@ -1014,7 +1018,8 @@ Module SWPPROCESS
 
 					! Update chemistry.
                     If (CHEM_TYPE == VARIABLE_CHEM) Then
-					    Call UpdateChemistry(t, rxn, 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
+					   ! Call UpdateChemistry(t, rxn, 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
+					    Call UpdateChemistry(t, rxn, 1, soln%Chemistry, SampleVolume(soln, chem(soln%Chemistry%Shared%iRho)), flag)
                     End If
 				Else
 					flag = FICTICIOUS_EVENT
@@ -1572,7 +1577,8 @@ Module SWPPROCESS
 
 						If (num > 0) Then
 							Call DeferredSurface(t, i, sp, num, soln, mech, &
-                                                 SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
+                                                ! SampleVolume(soln, chem(soln%Chemistry%Shared%iT)), flag)
+                                                 SampleVolume(soln, chem(soln%Chemistry%Shared%iRho)), flag)
 
 						    If (flag < 0) Then
 							    Return
