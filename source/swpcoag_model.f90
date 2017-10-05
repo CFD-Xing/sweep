@@ -356,7 +356,7 @@ Module SWPCOAG_MODEL
 		Real, Intent(OUT) :: k1, k2, k3 ! Condensations terms.
 
 		! EXECUTABLE CODE.
-        k3 = 1.3/2.0 * C_fm / Sqrt(m)
+        k3 = 1.3/2.2 * C_fm / Sqrt(m)
         k2 = d * k3 * 2.0 ! * 1.13 (A4 shape corrections).
         k1 = d * k2 / 2.0 ! * 1.28 = 1.13 * 1.13
 	End Subroutine
