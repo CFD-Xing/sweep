@@ -110,7 +110,8 @@ Program Profile_Driver_Program
 
             ! Reset Sweep solution.
 	        Call ClearEnsemble(soln%Ensemble)
-	        Call SetScaling(soln, sim%MaxM0, MaxVal(chem%Chem(chem%iT,:)))
+	 !       Call SetScaling(soln, sim%MaxM0, MaxVal(chem%Chem(chem%iT,:)))
+	        Call SetScaling(soln, sim%MaxM0, MinVal(chem%Chem(chem%irho,:)))
 
             ! Start output.
             t = sim%Times%Items(1)

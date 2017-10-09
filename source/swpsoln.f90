@@ -255,7 +255,8 @@ Module SWPSOLN
 !		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume
 !		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume * T / soln%BaseTemperature
 ! MIN DENSITY IS THE REF VALUE
-		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume / T * 0.000202418
+!		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume / T * 0.000270729
+		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume / T * soln%BaseTemperature
 	End Function
 
 	! -------------------------------------------------------
