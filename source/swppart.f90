@@ -483,11 +483,11 @@ Module SWPPART
         ElseIf (mech%ParticleModel == SURFACE_VOLUME_MODEL) Then
             Select Case (rid) 
                 Case (GROWTH_RADIUS)
-                !    sp%Surface = sp%Surface + (2.0 * dvol / GrowthRadius(sp%Surface))
-                    sp%Surface = sp%Surface + 2.0/3.0* (1.0/36.0/3.14)**(-0.2043) * dvol * vold**(2.0*0.2043-1) * sp%Surface**(-0.2043*3.0+1)
+                    sp%Surface = sp%Surface + (2.0 * dvol / GrowthRadius(sp%Surface))
+                !    sp%Surface = sp%Surface + 2.0/3.0* (1.0/36.0/3.14)**(-0.2043) * dvol * vold**(2.0*0.2043-1) * sp%Surface**(-0.2043*3.0+1)
                 Case (OXIDATION_RADIUS)
-               !      sp%Surface = sp%Surface + (2.0 * dvol / OxidationRadius(vold, sp%Surface))
-                    sp%Surface = sp%Surface + 2.0/3.0 * dvol / vold * sp%Surface
+                     sp%Surface = sp%Surface + (2.0 * dvol / OxidationRadius(vold, sp%Surface))
+               !     sp%Surface = sp%Surface + 2.0/3.0 * dvol / vold * sp%Surface
                 Case (EQUIV_SPHERE_DIAMETER)
                     sp%Surface = sp%Surface + (4.0 * dvol / EquivSphereDiameter(vold))
                 Case (COLLISION_DIAMETER)
@@ -854,7 +854,11 @@ Module SWPPART
 
         CollisionDiameter_Part = (6.0 * Volume(sp, mech%Components, mech%ComponentCount) / PI) ** ONE_THIRD
         If (mech%ParticleModel == SURFACE_VOLUME_MODEL) Then
-		    CollisionDiameter_Part = (CollisionDiameter_Part + Sqrt(sp%Surface / PI)) * ONE_HALF
+		!    CollisionDiameter_Part = (CollisionDiameter_Part + Sqrt(sp%Surface / PI)) * ONE_HALF
+                CollisionDiameter_Part = Volume(sp, mech%Components, mech%ComponentCount)
+                CollisionDiameter_Part = 6.0/(36.0*PI)**(1./1.8) &
+                                  * CollisionDiameter_Part**(1.0-2.0/1.8)   &
+                                  * sp%Surface**(3.0/1.8 - 1.0)
         End If
 	End Function
 
@@ -873,7 +877,10 @@ Module SWPPART
 
         CollisionDiameter_SurfVol = (6.0 * v / PI) ** ONE_THIRD
         If (mech%ParticleModel == SURFACE_VOLUME_MODEL) Then
-		    CollisionDiameter_SurfVol = (CollisionDiameter_SurfVol + Sqrt(s / PI)) * ONE_HALF
+!		    CollisionDiameter_SurfVol = (CollisionDiameter_SurfVol + Sqrt(s / PI)) * ONE_HALF
+                CollisionDiameter_SurfVol = 6.0/(36.0*PI)**(1./1.8) &
+                                  * v**(1.0-2.0/1.8)   &
+                                  * s**(3.0/1.8 - 1.0)
         End If
 	End Function
 
@@ -1146,6 +1153,7 @@ Module SWPPART
 		stats(iM6)	    = stats(iM1) * stats(iM5)
         stats(iMass)    = Dble(sp%Properties(iM))
         stats(iV)       = Dble(sp%Properties(iV))
+        stats(iM2)      = stats(iV) * stats(iV) 
 		stats(iSurf)    = Dble(sp%Surface)
 !		stats(iActSurf) = Dble(sp%ActSurf)
 		stats(iActSurf) = Dble(sp%Surface)**(3.0D0/2.0D0)
