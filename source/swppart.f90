@@ -419,6 +419,7 @@ Module SWPPART
 
         ! VARIABLES.
         Integer :: i
+        Real :: sc2, vc2, theta, v1, vol, surf, ssph
 
 		! EXECUTABLE CODE.
 		sp%Components = sp1%Components + sp2%Components
@@ -432,11 +433,30 @@ Module SWPPART
 
         If (mech%ParticleModel == SPHERICAL_PARTICLE_MODEL) Then
             ! Total coalescence.
-            sp%Surface = EquivSphereSurface_Vol(sp1%Properties(iV) + sp1%Properties(iV))
+            sp%Surface = EquivSphereSurface_Vol(sp1%Properties(iV) + sp2%Properties(iV))
         ElseIf (mech%ParticleModel == SURFACE_VOLUME_MODEL) Then
             ! Point contact.
             sp%Surface = sp1%Surface + sp2%Surface
         End If
+
+        v1 = 10**(2.6) * 1.0e-21
+        vc2 = 2.1443e-23
+        sc2 = PI * ( 6.0*vc2/PI )**(2.0/3.0)
+        vol=sp1%Properties(iV) + sp2%Properties(iV)
+        if(vol<v1) then
+          theta = 2.0
+        else
+          theta = 3.0 * ( log(vol/v1) + 2.0/3.0 * log(v1/vc2) ) / log(vol/vc2)
+        endif
+
+        If (mech%ParticleModel == SPHERICAL_PARTICLE_MODEL) Then
+           theta=2.0
+        End if
+        ssph = (vol/vc2)**(2.0/3.0) * sc2
+        surf = (vol/vc2)**(theta/3.0) * sc2
+        sp%Surface = surf
+        sp%Surface = Max(sp%Surface, ssph)
+
 
         ! Now use coagulation rules to set particle type.
 		sp%TypeID = 0 ! Type reset on combination!
@@ -469,6 +489,7 @@ Module SWPPART
 
         ! VARIABLES.
         Real :: dvol, vold, ssph
+        Real :: sc2, vc2, theta, v1, vol, surf
 
 		! EXECUTABLE CODE.
         vold = Volume(sp%Components, mech%Components, mech%ComponentCount)
@@ -495,6 +516,24 @@ Module SWPPART
             End Select
             sp%Surface = Max(sp%Surface, ssph)
         End If
+
+        v1 = 10**(2.6) * 1.0e-21
+        vc2 = 2.1443e-23
+        sc2 = PI * ( 6.0*vc2/PI )**(2.0/3.0)
+        vol=vold+dvol
+        if(vol<v1) then
+          theta = 2.0
+        else
+          theta = 3.0 * ( log(vol/v1) + 2.0/3.0 * log(v1/vc2) ) / log(vol/vc2)
+        endif
+
+        If (mech%ParticleModel == SPHERICAL_PARTICLE_MODEL) Then
+           theta=2.0
+        End if
+        surf = (vol/vc2)**(theta/3.0) * sc2
+        sp%Surface = surf
+        sp%Surface = Max(sp%Surface, ssph)
+
 
         ! Recalc properties.
 		Call CalcProperties(sp, mech)
@@ -851,15 +890,17 @@ Module SWPPART
 		Implicit None
 		Type(StochParticle), Intent(IN) :: sp
         Type(Mechanism), Intent(IN) :: mech
+        REAL vol
 
         CollisionDiameter_Part = (6.0 * Volume(sp, mech%Components, mech%ComponentCount) / PI) ** ONE_THIRD
         If (mech%ParticleModel == SURFACE_VOLUME_MODEL) Then
 		!    CollisionDiameter_Part = (CollisionDiameter_Part + Sqrt(sp%Surface / PI)) * ONE_HALF
-                CollisionDiameter_Part = Volume(sp, mech%Components, mech%ComponentCount)
+                vol = Volume(sp, mech%Components, mech%ComponentCount)
                 CollisionDiameter_Part = 6.0/(36.0*PI)**(1./1.8) &
-                                  * CollisionDiameter_Part**(1.0-2.0/1.8)   &
+                                  * vol**(1.0-2.0/1.8)   &
                                   * sp%Surface**(3.0/1.8 - 1.0)
         End If
+
 	End Function
 
 	! -------------------------------------------------------
@@ -882,6 +923,8 @@ Module SWPPART
                                   * v**(1.0-2.0/1.8)   &
                                   * s**(3.0/1.8 - 1.0)
         End If
+
+
 	End Function
 
 	! -------------------------------------------------------
