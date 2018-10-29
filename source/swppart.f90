@@ -454,8 +454,9 @@ Module SWPPART
         End if
         ssph = (vol/vc2)**(2.0/3.0) * sc2
         surf = (vol/vc2)**(theta/3.0) * sc2
-        sp%Surface = surf
-        sp%Surface = Max(sp%Surface, ssph)
+! MODIFICATION SURFACE POUR IMPOSER LA LOI DE RODRIGUES ET AL 2018
+!        sp%Surface = surf
+!        sp%Surface = Max(sp%Surface, ssph)
 
 
         ! Now use coagulation rules to set particle type.
@@ -531,8 +532,11 @@ Module SWPPART
            theta=2.0
         End if
         surf = (vol/vc2)**(theta/3.0) * sc2
-        sp%Surface = surf
-        sp%Surface = Max(sp%Surface, ssph)
+!*****************************************************************
+! MODIFICATION SURFACE POUR IMPOSER LA LOI DE RODRIGUES ET AL 2018
+!*****************************************************************
+!        sp%Surface = surf
+!        sp%Surface = Max(sp%Surface, ssph)
 
 
         ! Recalc properties.
@@ -895,6 +899,10 @@ Module SWPPART
         CollisionDiameter_Part = (6.0 * Volume(sp, mech%Components, mech%ComponentCount) / PI) ** ONE_THIRD
         If (mech%ParticleModel == SURFACE_VOLUME_MODEL) Then
 		!    CollisionDiameter_Part = (CollisionDiameter_Part + Sqrt(sp%Surface / PI)) * ONE_HALF
+!********************************************************************************************
+! DEFINITION DU DIAMETRE COLLISIONEL CONSISTENT AVEC LE MODEL SECTIONEL ==> PAS
+! FORCEMENT GENERALE
+!****************************************************************************************
                 vol = Volume(sp, mech%Components, mech%ComponentCount)
                 CollisionDiameter_Part = 6.0/(36.0*PI)**(1./1.8) &
                                   * vol**(1.0-2.0/1.8)   &
