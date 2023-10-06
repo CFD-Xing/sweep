@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					sweep.f90
-! Project:				Sweep 2
+! File:				sweep.f90
+! Project:			Sweep 2
 ! Author(s):			Matthew Celnik (msc37) & Rob Patterson (riap2)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -48,50 +48,50 @@
 !           Developed by Makoto Matsumoto and Takuji Nishimura.
 !
 ! Functions:
-!	InitSweep		-	Initialises Sweep.
+!    InitSweep		-	Initialises Sweep.
 ! *****************************************************************************
 
 
 Module Sweep
-	! -------------------------------------------------------
-	! SWEEP PUBLIC INTERFACE.
-	! -------------------------------------------------------
-	! All these functions/modules will be visible to any
-	! code which uses the Sweep solver.  That is, this list
-	! represents the public interface of Sweep2.
-	Use SWPERR
-	Use SWPSTATS
+    ! -------------------------------------------------------
+    ! SWEEP PUBLIC INTERFACE.
+    ! -------------------------------------------------------
+    ! All these functions/modules will be visible to any
+    ! code which uses the Sweep solver.  That is, this list
+    ! represents the public interface of Sweep2.
+    Use SWPERR
+    Use SWPSTATS
     Use SWPPARAMS
     Use SWPPART, GetParticleStats=>GetStats
-	Use SWPSTEP, only: RunSweep=>Run
-	Use SWPCHEM, only: LoadSweepChem=>LoadChem, UnloadSweepChem=>UnloadChem, &
+    Use SWPSTEP, only: RunSweep=>Run
+    Use SWPCHEM, only: LoadSweepChem=>LoadChem, UnloadSweepChem=>UnloadChem, &
                        SweepChemData=>ChemData, InitSweepChem=>InitChem, &
                        GetSweepChem=>GetChem
-	Use SWPENSEMBLE, only: ClearEnsemble, GetEnsembleArray, &
-						   LoadEnsembleArray, ParticleCount
-	Use SWPSOLN, only: SetScaling, SampleVolume, SetM0, GetM0
+    Use SWPENSEMBLE, only: ClearEnsemble, GetEnsembleArray, &
+                           LoadEnsembleArray, ParticleCount
+    Use SWPSOLN, only: SetScaling, SampleVolume, SetM0, GetM0
     Use SWPSOLN, only: SweepSolution=>Solution, InitSweepSolution=>Init, &
                        DeleteSweepSolution=>DeleteSolution, ResetSweepSolution=>Reset, &
                        ResetSweepCT=>ResetCT, WriteSweepSolution=>WriteSolution, &
                        ReadSweepSolution=>ReadSolution, CopySweepSolution=>CopySolution
     Use SWPMECH, only: SweepMechanism=>Mechanism, InitSweepMechanism=>InitMech, &
                        DeleteSweepMechanism=>DeleteMech
-	Use SWPCHEM_SHARED, only: ABFAlpha
+    Use SWPCHEM_SHARED, only: ABFAlpha
     Use SWPPROCESS, only: SweepChemChangeRates=>ChemChangeRates, SweepRateTerms=>GroupedRateTerms
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Implicit none
-	Public
+    Implicit none
+    Public
 
-	Contains
+    Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine InitSweep()
-		! DESCRIPTION:
-		!	Initialises Sweep.
+    Subroutine InitSweep()
+        ! DESCRIPTION:
+        !   Initialises Sweep.
         Use SWPRNG
         Implicit None
         Call SeedRnd(123) ! Seed random number generator.
-	End Subroutine
+    End Subroutine
 End Module

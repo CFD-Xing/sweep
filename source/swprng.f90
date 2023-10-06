@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					swprng.f90
-! Project:				Sweep 2
+! File:				swprng.f90
+! Project:			Sweep 2
 ! Author(s):			Matthew Celnik (msc37) & Rob Patterson (riap2)
 !
 ! Copyright (C) 2006  Matthew S Celnik & Robert Patterson
@@ -37,61 +37,61 @@
 !   Website: como.cheng.cam.ac.uk
 !
 ! Purpose:
-!	The random number generator for Sweep.
+!   The random number generator for Sweep.
 !
 ! Functions:
 !   SeedRnd     -   Seeds the random number generator.
-!	Rnd         -   Generates a uniform real random number in [0,1].
+!   Rnd         -   Generates a uniform real random number in [0,1].
 !   IRnd        -   Generates a random integer in [0,Top].
 ! *****************************************************************************
 
 
 Module SWPRNG
-	! -------------------------------------------------------
-	! IMPORT PUBLIC MODULE FUNCTIONS.
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! IMPORT PUBLIC MODULE FUNCTIONS.
+    ! -------------------------------------------------------
     Use MersenneTwister, only: ignpoi
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Implicit none
-	Public
+    Implicit none
+    Public
 
-	Contains
+    Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine SeedRnd(seed)
-		! DESCRIPTION:
-		!	Seeds the random number generator.
-		Use MersenneTwister, only: sgrnd
-		Implicit None
+    Subroutine SeedRnd(seed)
+        ! DESCRIPTION:
+        !    Seeds the random number generator.
+        Use MersenneTwister, only: sgrnd
+        Implicit None
         Integer, Intent(IN) :: seed
 !        Integer :: sd(1)
 
-		Call sgrnd(seed)
+         Call sgrnd(seed)
 
 !        sd(1) = seed
 !        Call Random_Seed(PUT=sd)
-	End Subroutine
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Real Function Rnd()
-		! DESCRIPTION:
-		!	Returns a uniform real random number in [0,1].
-		Use MersenneTwister, only: grnd
-		Implicit None
-		Rnd = Real(grnd())
+    Real Function Rnd()
+        ! DESCRIPTION:
+        !  Returns a uniform real random number in [0,1].
+        Use MersenneTwister, only: grnd
+        Implicit None
+        Rnd = Real(grnd())
 !        Call Random_Number(Rnd)
-	End Function
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
 	Real Function IRnd(top)
-		! DESCRIPTION:
-		!	Returns a uniform random integer in [1,top].
+        ! DESCRIPTION:
+        !    Returns a uniform random integer in [1,top].
         Use MersenneTwister, only: igrnd
-		Implicit None
+        Implicit None
 
         Integer, Intent(IN) :: top
 !        Real :: num
@@ -100,6 +100,6 @@ Module SWPRNG
 
 !        Call Random_Number(num)
 !        IRnd = Int(num * Real(top) - 0.5E0) + 1
-	End Function
+    End Function
 
 End Module

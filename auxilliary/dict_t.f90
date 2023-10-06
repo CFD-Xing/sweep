@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					dict_t.f90
-! Project:				N/A.
+! File:				dict_t.f90
+! Project:			N/A.
 ! Author(s):			Matthew Celnik (msc37)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -35,7 +35,7 @@
 !   Website: como.cheng.cam.ac.uk
 !
 ! Purpose:
-!	An implementation of a variable length dictionary of different types.  Dictionary
+!   An implementation of a variable length dictionary of different types.  Dictionary
 !   entries have a key (string) and a data value. Currently
 !   included data value types are:
 !
@@ -81,7 +81,7 @@ Module DICT_DP_T
 
     Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine Destroy(dict)
         ! DESCRIPTION
@@ -99,7 +99,7 @@ Module DICT_DP_T
         Nullify(dict%Items)
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine SetP(new, old)
         ! DESCRIPTION
@@ -115,7 +115,7 @@ Module DICT_DP_T
         new%Items => old%Items
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine Copy(new, old)
         ! DESCRIPTION
@@ -130,7 +130,7 @@ Module DICT_DP_T
         new%Items = old%Items
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function Add(dict1, dict2) Result (sumdict)
         ! DESCRIPTION
@@ -161,7 +161,7 @@ Module DICT_DP_T
         sumdict%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddItem(dict, key, value) Result (newdict)
         ! DESCRIPTION
@@ -194,7 +194,7 @@ Module DICT_DP_T
         newdict%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddEntry(dict, ent) Result (newdict)
         ! DESCRIPTION
@@ -225,7 +225,7 @@ Module DICT_DP_T
         newdict%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddItems(dict, keys, values) Result (newdict)
         ! DESCRIPTION
@@ -262,7 +262,7 @@ Module DICT_DP_T
         newdict%Items = allitems
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddEntries(dict, entries) Result (newdict)
         ! DESCRIPTION
@@ -324,7 +324,7 @@ Module DICT_INT_T
 
     Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine Destroy(dict)
         ! DESCRIPTION
@@ -342,7 +342,7 @@ Module DICT_INT_T
         Nullify(dict%Items)
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine SetP(new, old)
         ! DESCRIPTION
@@ -358,7 +358,7 @@ Module DICT_INT_T
         new%Items => old%Items
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine Copy(new, old)
         ! DESCRIPTION
@@ -373,7 +373,7 @@ Module DICT_INT_T
         new%Items = old%Items
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function Add(dict1, dict2) Result (sumdict)
         ! DESCRIPTION
@@ -404,7 +404,7 @@ Module DICT_INT_T
         sumdict%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddItem(dict, key, value) Result (newdict)
         ! DESCRIPTION
@@ -437,7 +437,7 @@ Module DICT_INT_T
         newdict%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddEntry(dict, ent) Result (newdict)
         ! DESCRIPTION
@@ -468,7 +468,7 @@ Module DICT_INT_T
         newdict%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddItems(dict, keys, values) Result (newdict)
         ! DESCRIPTION
@@ -505,7 +505,7 @@ Module DICT_INT_T
         newdict%Items = allitems
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddEntries(dict, entries) Result (newdict)
         ! DESCRIPTION

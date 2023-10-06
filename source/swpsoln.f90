@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					swpsoln.f90
-! Project:				Sweep 2
+! File:				swpsoln.f90
+! Project:			Sweep 2
 ! Author(s):			Matthew Celnik (msc37) & Rob Patterson (riap2)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -37,7 +37,7 @@
 !   Website: como.cheng.cam.ac.uk
 !
 ! Purpose:
-!	Definition of types which describe data used by Sweep to solve a population
+!   Definition of types which describe data used by Sweep to solve a population
 !   balance.
 ! *****************************************************************************
 
@@ -56,7 +56,7 @@ Module SWPSOLN
         Real :: LastKnownScale  =  1.0 ! Last ensemble scaling before update.
         ! Solver parameters.
         Real :: SplitRatio = 1.0D9 ! Mean number of non-split events before updating all deferred.
-        Integer :: MinStepCount = 1 ! Minimum number of split steps.
+        Integer :: MinStepCount = 2 ! Minimum number of split steps. J.Y. Xing
         ! Counters.
         Integer(4), Pointer :: ProcessCounter(:)    ! Counts of each process performed.
         Integer(4), Pointer :: FicticiousCounter(:) ! Counts of ficticious events.
@@ -64,7 +64,7 @@ Module SWPSOLN
         Integer(8) :: LPDACount = 0         ! Number of LPDA integrates done.
         ! Computation timing (s).
         Real :: CT=0.0, PreSplitCT=0.0, DeferCT=0.0, RatesCT=0.0, &
-			    ProcessCT=0.0, ChemCT=0.0
+        ProcessCT=0.0, ChemCT=0.0
         ! System parameters (should go somewhere ewlse eventually).
         Logical :: SolveInOut = .False. ! Solve inflow & outflow?
         Real    :: ResidenceTime = 0.0 ! PSR, required for inflow & outflow.
@@ -72,16 +72,16 @@ Module SWPSOLN
 
     Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine Init(soln, pcount, spnames, mech, flag)
-		! DESCRIPTION:
-		!	Initialises a solution type.
+    Subroutine Init(soln, pcount, spnames, mech, flag)
+       ! DESCRIPTION:
+       !   Initialises a solution type.
 
         Use SWPENSEMBLE, InitEnsemble=>Init
         Use SWPCHEM
         Use SWPMECH_TYPES
-		Implicit None
+        Implicit None
         
         ! ARGUMENTS.
         Type(Solution), Intent(OUT) :: soln       ! Solution to initialise.
@@ -99,16 +99,16 @@ Module SWPSOLN
         soln%ProcessCounter = 0
         Allocate(soln%FicticiousCounter(mech%ProcessCount), STAT=flag)
         soln%FicticiousCounter = 0
-	End Subroutine
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine Reset(soln)
-		! DESCRIPTION:
-		!	Resets a solution type.
+    Subroutine Reset(soln)
+        ! DESCRIPTION:
+        !    Resets a solution type.
 
         Use SWPENSEMBLE, only: ClearEnsemble
-		Implicit None
+        Implicit None
         
         ! ARGUMENTS.
         Type(Solution), Intent(INOUT) :: soln
@@ -118,29 +118,27 @@ Module SWPSOLN
         soln%BaseVolume        = -1.0 
         soln%BaseTemperature   = -1.0 
         soln%LastKnownScale    =  1.0 
-        soln%ProcessCounter    = 0
-        soln%FicticiousCounter = 0
-        soln%StepCount         = 0        
-        soln%LPDACount         = 0        
-        soln%CT                = 0.0
-        soln%PreSplitCT        = 0.0
-        soln%DeferCT           = 0.0
-        soln%RatesCT           = 0.0
-	    soln%ProcessCT         = 0.0
-        soln%ChemCT            = 0.0
-!        soln%SolveInOut        = .False.
-!        soln%ResidenceTime     = 0.0
-	End Subroutine
+        soln%ProcessCounter    =  0
+        soln%FicticiousCounter =  0
+        soln%StepCount         =  0        
+        soln%LPDACount         =  0        
+        soln%CT                =  0.0
+        soln%PreSplitCT        =  0.0
+        soln%DeferCT           =  0.0
+        soln%RatesCT           =  0.0
+        soln%ProcessCT         =  0.0
+        soln%ChemCT            =  0.0
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine CopySolution(s1, s2)
-		! DESCRIPTION:
-		!	Copies the data from one solution to another.
+    Subroutine CopySolution(s1, s2)
+        ! DESCRIPTION:
+        !   Copies the data from one solution to another.
 
         Use SWPCHEM
         USe SWPENSEMBLE
-		Implicit None
+        Implicit None
         
         ! ARGUMENTS.
         Type(Solution), Intent(INOUT) :: s1, s2
@@ -168,17 +166,17 @@ Module SWPSOLN
         s2%ResidenceTime = s1%ResidenceTime
         Call CopyChem(s1%Chemistry, s2%Chemistry)
         Call CopyEnsemble(s1%Ensemble, s2%Ensemble)
-	End Subroutine
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine DeleteSolution(soln)
-		! DESCRIPTION:
-		!	Free memory allocated to a solution.
+    Subroutine DeleteSolution(soln)
+        ! DESCRIPTION:
+        !   Free memory allocated to a solution.
 
         Use SWPENSEMBLE, InitEnsemble=>Init
         Use SWPCHEM
-		Implicit None
+        Implicit None
         
         ! ARGUMENTS.
         Type(Solution), Intent(INOUT) :: soln ! Solution to initialise.
@@ -190,16 +188,16 @@ Module SWPSOLN
         Deallocate(soln%ProcessCounter, soln%FicticiousCounter, STAT=err)
         Call DeleteChem(soln%Chemistry)
         Call DeleteEnsemble(soln%Ensemble)
-	End Subroutine
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine WriteSolution(soln, fnum)
-		! DESCRIPTION:
-		!	Writes a solution to a binary file.
+    Subroutine WriteSolution(soln, fnum)
+        ! DESCRIPTION:
+        !    Writes a solution to a binary file.
         Use SWPENSEMBLE, only: WriteEnsemble
         Use SWPCHEM, only: WriteChemistry
-		Implicit None
+        Implicit None
 
         ! ARGUMENTS.
         Type(Solution), Intent(IN) :: soln ! Solution to output.
@@ -213,16 +211,16 @@ Module SWPSOLN
                     soln%LPDACount, soln%CT, soln%PreSplitCT, soln%DeferCT, &
                     soln%RatesCT, soln%ProcessCT, soln%ChemCT, soln%SolveInOut, &
                     soln%ResidenceTime
-	End Subroutine
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine ReadSolution(soln, fnum)
-		! DESCRIPTION:
-		!	Reads a solution from a binary file.
+    Subroutine ReadSolution(soln, fnum)
+        ! DESCRIPTION:
+        !    Reads a solution from a binary file.
         Use SWPENSEMBLE, only: ReadEnsemble
         Use SWPCHEM, only: ReadChemistry
-		Implicit None
+        Implicit None
 
         ! ARGUMENTS.
         Type(Solution), Intent(INOUT) :: soln ! Solution to output.
@@ -236,114 +234,111 @@ Module SWPSOLN
                    soln%LPDACount, soln%CT, soln%PreSplitCT, soln%DeferCT, &
                    soln%RatesCT, soln%ProcessCT, soln%ChemCT, soln%SolveInOut, &
                    soln%ResidenceTime
-	End Subroutine
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Pure Real Function SampleVolume(soln, T)
-		! DESCRIPTION:
-		!	Calculates the sample volume for a given
-		!	temperature using the base volume and temperature
-		!	taken from the start of the simulation.  This function
-		!	uses Boyle's law, and is only suitable for ideal gases.
-		! RETURNS:
-		!	Sample volume (cm-3).
+    Pure Real Function SampleVolume(soln, T)
+        ! DESCRIPTION:
+        !   Calculates the sample volume for a given
+        !   temperature using the base volume and temperature
+        !   taken from the start of the simulation.  This function
+        !   uses Boyle's law, and is only suitable for ideal gases.
+        ! RETURNS:
+        !   Sample volume (cm-3).
         Use SWPENSEMBLE, only: ScalingFactor
-		Implicit None
+        Implicit None
         Type(Solution), Intent(IN) :: soln
-		Real, Intent(IN) :: T	! Temperature (K).
+	Real, Intent(IN) :: T ! Temperature (K).
 !		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume
-!		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume * T / soln%BaseTemperature
-! MIN DENSITY IS THE REF VALUE
-!		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume / T * 0.000270729
-		SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume / T * soln%BaseTemperature
-	End Function
+        SampleVolume = ScalingFactor(soln%Ensemble) * soln%BaseVolume / T * soln%BaseTemperature
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine SetScaling(soln, maxM0, temp)
-		! DESCRIPTION:
-		!	Sets the base sample volume and the corresponding
-		!	gas temperature (K).
-		Implicit None
+    Subroutine SetScaling(soln, maxM0, temp)
+        ! DESCRIPTION:
+        !   Sets the base sample volume and the corresponding
+        !   gas temperature (K).
+        Implicit None
         Type(Solution), Intent(INOUT) :: soln
-		Real, Intent(IN) :: maxM0 ! Maximum expected number density.
+	Real, Intent(IN) :: maxM0 ! Maximum expected number density.
         Real, Intent(IN) :: temp  ! Temperature (K) at predicted max. M0.
-		soln%BaseVolume	= Real(soln%Ensemble%Capacity) / maxM0
-		soln%BaseTemperature = temp
-	End Subroutine
+        soln%BaseVolume = Real(soln%Ensemble%Capacity) / maxM0
+        soln%BaseTemperature = temp
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine SetM0(soln, m0)
-		! DESCRIPTION:
-		!	Sets the M0.
-		Implicit None
+    Subroutine SetM0(soln, m0)
+        ! DESCRIPTION:
+        !   Sets the M0.
+        Implicit None
         Type(Solution), Intent(INOUT) :: soln
 		Real, Intent(IN) :: m0 ! Maximum expected number density.
         If (m0 > 0.0E0) Then
-		    soln%BaseVolume	= Real(soln%Ensemble%FirstSpace-1) / m0
+            soln%BaseVolume = Real(soln%Ensemble%FirstSpace-1) / m0
         End If
-	End Subroutine
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
 	Real Function GetM0(soln)
-		! DESCRIPTION:
-		!	Gets the M0.
-		Implicit None
+        ! DESCRIPTION:
+        !    Gets the M0.
+        Implicit None
         Type(Solution), Intent(INOUT) :: soln
-		GetM0 = Real(soln%Ensemble%FirstSpace-1) / soln%BaseVolume
-	End Function
+        GetM0 = Real(soln%Ensemble%FirstSpace-1) / soln%BaseVolume
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine SetBaseTemperature(soln, temp, scaleVol)
-		! DESCRIPTION:
-		!	Sets the base gas temperature (K) of the system.
-		!	This involve rescaling the sample volume first.
+    Subroutine SetBaseTemperature(soln, temp, scaleVol)
+        ! DESCRIPTION:
+        !   Sets the base gas temperature (K) of the system.
+        !   This involve rescaling the sample volume first.
 
-		Implicit None
+        Implicit None
 
-		! ARGUMENTS.
+        ! ARGUMENTS.
         Type(Solution), Intent(INOUT) :: soln
-		Real, Intent(IN) :: temp ! Temperature (K) to set.
-		! Set to True to rescale the sample volume to
-		! the new temperature, False to keep the sample
-		! volume constant.
-		Logical, Intent(IN)	::	scaleVol
+	Real, Intent(IN) :: temp ! Temperature (K) to set.
+        ! Set to True to rescale the sample volume to
+        ! the new temperature, False to keep the sample
+        ! volume constant.
+	Logical, Intent(IN) :: scaleVol
 
-		! EXECUTABLE CODE.
-		If (scaleVol) soln%BaseVolume = SampleVolume(soln, temp)
-		soln%BaseTemperature = temp
-	End Subroutine
+        ! EXECUTABLE CODE.
+        If (scaleVol) soln%BaseVolume = SampleVolume(soln, temp)
+        soln%BaseTemperature = temp
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine ResetCounters(soln)
-		! DESCRIPTION:
-		!	Resets the process counters to 0.
-		Implicit None
+    Subroutine ResetCounters(soln)
+        ! DESCRIPTION:
+        !   Resets the process counters to 0.
+        Implicit None
         Type(Solution), Intent(INOUT) :: soln
-		soln%ProcessCounter = 0
+        soln%ProcessCounter = 0
         soln%FicticiousCounter = 0
         soln%StepCount = 0
         soln%LPDACount = 0
-	End Subroutine
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine ResetCT(soln)
-		! DESCRIPTION:
-		!	Resets the process counters to 0.
-		Implicit None
+    Subroutine ResetCT(soln)
+        ! DESCRIPTION:
+        !   Resets the process counters to 0.
+        Implicit None
         Type(Solution), Intent(INOUT) :: soln
         soln%CT         = 0.0
         soln%PreSplitCT = 0.0
         soln%DeferCT    = 0.0
         soln%RatesCT    = 0.0
-		soln%ProcessCT  = 0.0
+        soln%ProcessCT  = 0.0
         soln%ChemCT     = 0.0
-	End Subroutine
+    End Subroutine
 
 End Module

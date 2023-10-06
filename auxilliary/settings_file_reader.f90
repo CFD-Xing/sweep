@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					settings_file_reader.f90
-! Project:				Coupled Chemistry-Soot Solver.
+! File:				settings_file_reader.f90
+! Project:			Coupled Chemistry-Soot Solver.
 ! Author(s):			Matthew Celnik (msc37)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -35,7 +35,7 @@
 !   Website: como.cheng.cam.ac.uk
 !
 ! Purpose:
-!	A standard text file parser for files of the form:
+!   A standard text file parser for files of the form:
 !   
 !   KEYWORD param1 param2 ...
 !
@@ -44,22 +44,22 @@
 ! *****************************************************************************
 
 Module SettingsFileReader
-	Implicit None
-	Private
+    Implicit None
+    Private
     Public :: LoadSettingsFile, GetParams
 
-	! -------------------------------------------------------
-	! PARAMETERS.
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! PARAMETERS.
+    ! -------------------------------------------------------
 
     Integer, Private, Parameter :: LKEY = 20  ! Length of a keyword string.
     Integer, Private, Parameter :: LSTR = 200 ! Length of a descriptive string.
     Integer, Private, Parameter :: MAX_NPARAMS = 200 ! Max. number of parameters after a keyword.
     Integer, Private, Parameter :: MAX_NLINES  = 200 ! Max. number of lines in a file.
 
-	! -------------------------------------------------------
-	! DERIVED TYPES.
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! DERIVED TYPES.
+    ! -------------------------------------------------------
 
     Type, Public :: LineData
         Character(LEN=LKEY) :: Key=""
@@ -72,9 +72,9 @@ Module SettingsFileReader
         Type(LineData)      :: Lines(MAX_NLINES) ! Lines in file.
     End Type
 
-	! -------------------------------------------------------
-	! ROUTINE OVERLOADS.
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! ROUTINE OVERLOADS.
+    ! -------------------------------------------------------
 
     Interface GetParams
         Module Procedure GetParams_Str
@@ -92,34 +92,34 @@ Module SettingsFileReader
 
     Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine LoadSettingsFile(file, unit, fdata, flag)
-		! DESCRIPTION:
-		!	Parses a settings file and stores the data
+    Subroutine LoadSettingsFile(file, unit, fdata, flag)
+        ! DESCRIPTION:
+        !   Parses a settings file and stores the data
         !   in a FileData type, supplied by the calling code.
-		
+
         Use StrConv
-		Implicit None
+        Implicit None
 
-		! ARGUMENTS.
-		Character*(*), Intent(IN)   :: file  ! File name to read.
-		Integer, Intent(IN)         :: unit  ! Unit number on which to open file.
+        ! ARGUMENTS.
+        Character*(*), Intent(IN)   :: file  ! File name to read.
+        Integer, Intent(IN)         :: unit  ! Unit number on which to open file.
         Type(FileData), Intent(OUT) :: fdata ! Settings data from file.
-		Integer, Intent(OUT)        :: flag  ! Error flag.
+        Integer, Intent(OUT)        :: flag  ! Error flag.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, err
         Character(LEN=5000) :: line
         Character(LEN=LSTR) :: subs(MAX_NPARAMS+1)
 
-		! EXECUTABLE CODE.
-		flag = 0
+        ! EXECUTABLE CODE.
+        flag = 0
         i = 0
 
-		! Open file for reading.
-		Open(UNIT=unit, FILE=file, FORM="FORMATTED", &
-			 STATUS="OLD", ACTION="READ", IOSTAT=err)
+        ! Open file for reading.
+        Open(UNIT=unit, FILE=file, FORM="FORMATTED", &
+             STATUS="OLD", ACTION="READ", IOSTAT=err)
 
         If (err /= 0) Then
             ! Failed to open file.
@@ -128,70 +128,70 @@ Module SettingsFileReader
         End If
 
 
-		Do
-			! Read line from text file.
-			line = ""
-			Read(UNIT=unit, FMT="(A)", IOSTAT=err) line
+        Do
+            ! Read line from text file.
+            line = ""
+            Read(UNIT=unit, FMT="(A)", IOSTAT=err) line
 
-			If (err == -2) Then
-				! EOR: not applicable here.
-			ElseIf (err == -1) Then
-				! EOF: we have read all the data rows so
-				! exit loop.
-				Exit
-			ElseIf (err == 0) Then
-				! Normal read, no problems.
-			ElseIf (err > 0) Then
-				! Error occured when reading.
+            If (err == -2) Then
+                ! EOR: not applicable here.
+            ElseIf (err == -1) Then
+                ! EOF: we have read all the data rows so
+                ! exit loop.
+                Exit
+            ElseIf (err == 0) Then
+                ! Normal read, no problems.
+            ElseIf (err > 0) Then
+                ! Error occured when reading.
                 flag = -2
-				Exit
-			End If
+                Exit
+            End If
 
 
-			! Split the line into substrings.
+            ! Split the line into substrings.
             Call SplitString(line, " ", subs, LSTR, MAX_NPARAMS+1, .True.)
 
             ! Save line in FileData.
             i = i + 1
             fdata%Lines(i)%Key    = subs(1)
             fdata%Lines(i)%Params = subs(2:)
-		End Do
+        End Do
 
         ! Save file name and line count.
         fdata%Name   = file
         fdata%NLines = i
 
-		! Close input file.
-		Close (UNIT=unit, IOSTAT=err)
-	End Subroutine
+        ! Close input file.
+        Close (UNIT=unit, IOSTAT=err)
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_Str(fdata, key, params, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_Str(fdata, key, params, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   and returns the parameter as a string.
         !   If the keyword was not found then returns a
         !   blank strings and sets flag=-1.
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
 
-		Implicit None
+        Implicit None
 
-		! ARGUMENTS.
+        ! ARGUMENTS.
         Type(FileData), Intent(IN) :: fdata     ! Settings data from file.
         Character*(*), Intent(IN)  :: key       ! Keyword to find.
         Character*(*), Intent(OUT) :: params    ! Parameters returned.
-		Integer, Intent(OUT)       :: flag      ! Error flag.
+        Integer, Intent(OUT)       :: flag      ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, i1
         Character(LEN=LSTR) :: subs(MAX_NPARAMS+1)
 
-		! EXECUTABLE CODE.
+        ! EXECUTABLE CODE.
         GetParams_Str = 0
-		flag = -1
+        flag = -1
         params = ""
 
         If (Present(startLine)) Then
@@ -200,42 +200,42 @@ Module SettingsFileReader
             i1 = 1
         End If
 
-		Do i = i1, fdata%NLines
+        Do i = i1, fdata%NLines
             If (fdata%Lines(i)%Key == key) Then
                 flag = 0
                 GetParams_Str = i
                 params = fdata%Lines(i)%Params(1)
                 Exit
             End If
-		End Do
-	End Function
+        End Do
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_StrArray(fdata, key, params, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_StrArray(fdata, key, params, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   and returns the parameters as a list of strings.
         !   If the keyword was not found then returns a list
         !   of blank strings and sets flag=-1.
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
 
-		Implicit None
+        Implicit None
 
-		! ARGUMENTS.
+        ! ARGUMENTS.
         Type(FileData), Intent(IN) :: fdata     ! Settings data from file.
         Character*(*), Intent(IN)  :: key       ! Keyword to find.
         Character*(*), Intent(OUT) :: params(:) ! Parameters returned.
-		Integer, Intent(OUT)       :: flag      ! Error flag.
+        Integer, Intent(OUT)       :: flag      ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, i1
 
-		! EXECUTABLE CODE.
+        ! EXECUTABLE CODE.
         GetParams_StrArray = 0
-		flag = -1
+        flag = -1
         params = ""
 
         If (Present(startLine)) Then
@@ -244,43 +244,43 @@ Module SettingsFileReader
             i1 = 1
         End If
 
-		Do i = i1, fdata%NLines
+        Do i = i1, fdata%NLines
             If (fdata%Lines(i)%Key == key) Then
                 flag = 0
                 GetParams_StrArray = i
                 params = fdata%Lines(i)%Params
                 Exit
             End If
-		End Do
-	End Function
+        End Do
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_Real(fdata, key, params, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_Real(fdata, key, params, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   and returns the parameters as a list of double reals.
         !   If the keyword was not found then returns a list
         !   of 0.0 and sets flag=-1.
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
-        Use StrConv
-		Implicit None
 
-		! ARGUMENTS.
+        Use StrConv
+        Implicit None
+
+        ! ARGUMENTS.
         Type(FileData), Intent(IN) :: fdata     ! Settings data from file.
         Character*(*), Intent(IN)  :: key       ! Keyword to find.
-        Double Precision, Intent(OUT) :: params    ! Parameters returned.
-		Integer, Intent(OUT)       :: flag      ! Error flag.
+        Double Precision, Intent(OUT) :: params ! Parameters returned.
+        Integer, Intent(OUT)       :: flag      ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i
         Character(LEN=LSTR) :: sparams
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         params = 0.0E0
         sparams = ""
 
@@ -301,35 +301,35 @@ Module SettingsFileReader
             flag = -2
             params = 0.0E0
         End If
-	End Function
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_RealArray(fdata, key, params, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_RealArray(fdata, key, params, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   and returns the parameters as a list of double reals.
         !   If the keyword was not found then returns a list
         !   of 0.0 and sets flag=-1.
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
-        Use StrConv
-		Implicit None
 
-		! ARGUMENTS.
-        Type(FileData), Intent(IN) :: fdata     ! Settings data from file.
-        Character*(*), Intent(IN)  :: key       ! Keyword to find.
-        Double Precision, Intent(OUT)          :: params(:) ! Parameters returned.
-		Integer, Intent(OUT)       :: flag      ! Error flag.
+        Use StrConv
+        Implicit None
+
+        ! ARGUMENTS.
+        Type(FileData), Intent(IN)    :: fdata     ! Settings data from file.
+        Character*(*), Intent(IN)     :: key       ! Keyword to find.
+        Double Precision, Intent(OUT) :: params(:) ! Parameters returned.
+        Integer, Intent(OUT)          :: flag      ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i
         Character(LEN=LSTR) :: sparams(MAX_NPARAMS)
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         params = 0.0E0
         sparams = ""
 
@@ -352,35 +352,35 @@ Module SettingsFileReader
                 params(i) = 0.0E0
             End If
         End Do
-	End Function
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_Int(fdata, key, params, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_Int(fdata, key, params, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   and returns the parameters as a list of integers.
         !   If the keyword was not found then returns a list
         !   of 0 and sets flag=-1.
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
-        Use StrConv
-		Implicit None
 
-		! ARGUMENTS.
+        Use StrConv
+        Implicit None
+
+        ! ARGUMENTS.
         Type(FileData), Intent(IN) :: fdata     ! Settings data from file.
         Character*(*), Intent(IN)  :: key       ! Keyword to find.
-        Integer, Intent(OUT)       :: params ! Parameters returned.
-		Integer, Intent(OUT)       :: flag      ! Error flag.
+        Integer, Intent(OUT)       :: params    ! Parameters returned.
+        Integer, Intent(OUT)       :: flag      ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, err
         Character(LEN=LSTR) :: sparams
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         params = 0
         sparams = ""
 
@@ -401,35 +401,35 @@ Module SettingsFileReader
             flag = -2
             params = 0
         End If
-	End Function
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_IntArray(fdata, key, params, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_IntArray(fdata, key, params, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   and returns the parameters as a list of integers.
         !   If the keyword was not found then returns a list
         !   of 0 and sets flag=-1.
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
-        Use StrConv
-		Implicit None
 
-		! ARGUMENTS.
+        Use StrConv
+        Implicit None
+
+        ! ARGUMENTS.
         Type(FileData), Intent(IN) :: fdata     ! Settings data from file.
         Character*(*), Intent(IN)  :: key       ! Keyword to find.
         Integer, Intent(OUT)       :: params(:) ! Parameters returned.
-		Integer, Intent(OUT)       :: flag      ! Error flag.
+        Integer, Intent(OUT)       :: flag      ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, err
         Character(LEN=LSTR) :: sparams(MAX_NPARAMS)
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         params = 0
         sparams = ""
 
@@ -452,13 +452,13 @@ Module SettingsFileReader
                 params(i) = 0
             End If
         End Do
-	End Function
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_MixedSRI(fdata, key, fmt, sparams, rparams, iparams, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_MixedSRI(fdata, key, fmt, sparams, rparams, iparams, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   andd splits the parameters up into strings, reals
         !   or integers based on the fmt string.  The fmt string
         !   contains one character for each expected parameter
@@ -469,28 +469,28 @@ Module SettingsFileReader
         !   fmt = "RRISSS"
         !
         !   Easy!
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
-        Use StrConv
-		Implicit None
 
-		! ARGUMENTS.
+        Use StrConv
+        Implicit None
+
+        ! ARGUMENTS.
         Type(FileData), Intent(IN) :: fdata      ! Settings data from file.
         Character*(*), Intent(IN)  :: key        ! Keyword to find.
         Character*(*), Intent(IN)  :: fmt        ! Formats of parameters to read.
         Character*(*), Intent(OUT) :: sparams(:) ! Parameters returned.
-        Double Precision, Intent(OUT)          :: rparams(:) ! ''
+        Double Precision, Intent(OUT) :: rparams(:) ! ''
         Integer, Intent(OUT)       :: iparams(:) ! ''
         Integer, Intent(OUT)       :: flag       ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, is, ir, ii, err, nparams
         Character(LEN=LSTR) :: strs(MAX_NPARAMS)
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         sparams = ""
         rparams = 0.0E0
         iparams = 0
@@ -539,13 +539,13 @@ Module SettingsFileReader
                     Exit
             End Select
         End Do
-	End Function      
+    End Function      
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_MixedSR(fdata, key, fmt, sparams, rparams, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_MixedSR(fdata, key, fmt, sparams, rparams, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   andd splits the parameters up into strings or reals
         !   based on the fmt string.  The fmt string
         !   contains one character for each expected parameter
@@ -555,27 +555,27 @@ Module SettingsFileReader
         !   fmt = "RRSSS"
         !
         !   Easy!
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
-        Use StrConv
-		Implicit None
 
-		! ARGUMENTS.
+        Use StrConv
+        Implicit None
+
+        ! ARGUMENTS.
         Type(FileData), Intent(IN) :: fdata      ! Settings data from file.
         Character*(*), Intent(IN)  :: key        ! Keyword to find.
         Character*(*), Intent(IN)  :: fmt        ! Formats of parameters to read.
         Character*(*), Intent(OUT) :: sparams(:) ! Parameters returned.
-        Double Precision, Intent(OUT)          :: rparams(:) ! ''
+        Double Precision, Intent(OUT) :: rparams(:) ! ''
         Integer, Intent(OUT)       :: flag       ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, is, ir, err, nparams
         Character(LEN=LSTR) :: strs(MAX_NPARAMS)
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         sparams = ""
         rparams = 0.0E0
         strs = ""
@@ -614,13 +614,13 @@ Module SettingsFileReader
                     Exit
             End Select
         End Do
-	End Function      
+    End Function      
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_MixedSI(fdata, key, fmt, sparams, iparams, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_MixedSI(fdata, key, fmt, sparams, iparams, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   andd splits the parameters up into strings
         !   or integers based on the fmt string.  The fmt string
         !   contains one character for each expected parameter
@@ -631,13 +631,13 @@ Module SettingsFileReader
         !   fmt = "ISSS"
         !
         !   Easy!
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
-        Use StrConv
-		Implicit None
 
-		! ARGUMENTS.
+        Use StrConv
+        Implicit None
+
+        ! ARGUMENTS.
         Type(FileData), Intent(IN) :: fdata      ! Settings data from file.
         Character*(*), Intent(IN)  :: key        ! Keyword to find.
         Character*(*), Intent(IN)  :: fmt        ! Formats of parameters to read.
@@ -646,12 +646,12 @@ Module SettingsFileReader
         Integer, Intent(OUT)       :: flag       ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, is, ii, err, nparams
         Character(LEN=LSTR) :: strs(MAX_NPARAMS)
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         sparams = ""
         iparams = 0
         strs = ""
@@ -689,13 +689,13 @@ Module SettingsFileReader
                     Exit
             End Select
         End Do
-	End Function      
+    End Function      
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_MixedRI(fdata, key, fmt, rparams, iparams, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_MixedRI(fdata, key, fmt, rparams, iparams, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   andd splits the parameters up into reals
         !   or integers based on the fmt string.  The fmt string
         !   contains one character for each expected parameter
@@ -705,27 +705,27 @@ Module SettingsFileReader
         !   fmt = "RRI"
         !
         !   Easy!
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
-        Use StrConv
-		Implicit None
 
-		! ARGUMENTS.
-        Type(FileData), Intent(IN) :: fdata      ! Settings data from file.
-        Character*(*), Intent(IN)  :: key        ! Keyword to find.
-        Character*(*), Intent(IN)  :: fmt        ! Formats of parameters to read.
-        Double Precision, Intent(OUT)          :: rparams    ! Parameters returned.
-        Integer, Intent(OUT)       :: iparams    ! ''
-        Integer, Intent(OUT)       :: flag       ! Error flag.
+        Use StrConv
+        Implicit None
+
+        ! ARGUMENTS.
+        Type(FileData), Intent(IN)    :: fdata     ! Settings data from file.
+        Character*(*), Intent(IN)     :: key       ! Keyword to find.
+        Character*(*), Intent(IN)     :: fmt       ! Formats of parameters to read.
+        Double Precision, Intent(OUT) :: rparams   ! Parameters returned.
+        Integer, Intent(OUT)          :: iparams   ! ''
+        Integer, Intent(OUT)          :: flag      ! Error flag.
         Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, ir, ii, err, nparams
         Character(LEN=LSTR) :: strs(2)
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         rparams = 0.0E0
         iparams = 0
         strs = ""
@@ -765,13 +765,13 @@ Module SettingsFileReader
                     Exit
             End Select
         End Do
-	End Function      
+    End Function      
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Integer Function GetParams_MixedRIArray(fdata, key, fmt, rparams, iparams, flag, startLine)
-		! DESCRIPTION:
-		!	Searches a FileData type for the given keyword,
+    Integer Function GetParams_MixedRIArray(fdata, key, fmt, rparams, iparams, flag, startLine)
+        ! DESCRIPTION:
+        !   Searches a FileData type for the given keyword,
         !   andd splits the parameters up into reals
         !   or integers based on the fmt string.  The fmt string
         !   contains one character for each expected parameter
@@ -781,27 +781,27 @@ Module SettingsFileReader
         !   fmt = "RRI"
         !
         !   Easy!
-		! RETURNS:
+        ! RETURNS:
         !   Line number at which keyword was found.
-		
+
         Use StrConv
-		Implicit None
+        Implicit None
 
-		! ARGUMENTS.
-        Type(FileData), Intent(IN) :: fdata      ! Settings data from file.
-        Character*(*), Intent(IN)  :: key        ! Keyword to find.
-        Character*(*), Intent(IN)  :: fmt        ! Formats of parameters to read.
-        Double Precision, Intent(OUT)          :: rparams(:) ! Parameters returned.
-        Integer, Intent(OUT)       :: iparams(:) ! ''
-        Integer, Intent(OUT)       :: flag       ! Error flag.
-        Integer, Optional, Intent(IN) :: startLine ! Line number to start search at.
+        ! ARGUMENTS.
+        Type(FileData), Intent(IN) :: fdata         ! Settings data from file.
+        Character*(*), Intent(IN)  :: key           ! Keyword to find.
+        Character*(*), Intent(IN)  :: fmt           ! Formats of parameters to read.
+        Double Precision, Intent(OUT) :: rparams(:) ! Parameters returned.
+        Integer, Intent(OUT)       :: iparams(:)    ! ''
+        Integer, Intent(OUT)       :: flag          ! Error flag.
+        Integer, Optional, Intent(IN) :: startLine  ! Line number to start search at.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: i, ir, ii, err, nparams
         Character(LEN=LSTR) :: strs(MAX_NPARAMS)
 
-		! EXECUTABLE CODE.
-		flag = -1
+        ! EXECUTABLE CODE.
+        flag = -1
         rparams = 0.0E0
         iparams = 0
         strs = ""
@@ -845,6 +845,6 @@ Module SettingsFileReader
                     Exit
             End Select
         End Do
-	End Function     
+    End Function     
 
 End Module

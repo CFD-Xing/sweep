@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					profile_driver_output.f90
-! Project:				Sweep 2
+! File:				profile_driver_output.f90
+! Project:			Sweep 2
 ! Author(s):			Matthew Celnik (msc37) & Rob Patterson (riap2)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -61,14 +61,14 @@ Module Profile_Driver_Output
     Subroutine PrintHeader()
         Use ConsoleTable, ph=>PrintHeader
         Implicit None
-	    Call ph("Step", (/"Time (s)", "#SP", "M0", "M1", "Surface", "Avg. D"/), 6)
+        Call ph("Step", (/"Time (s)", "#SP", "M0", "M1", "Avg. np", "Avg. D"/), 6)
     End Subroutine
 
     ! -------------------------------------------------------
 
     Subroutine BeginOutput(file, run, flag)
-	    ! DESCRIPTION:
-	    !	Opens a file for output, appending the given run
+        ! DESCRIPTION:
+        !   Opens a file for output, appending the given run
         !   number to the file name.
 
         Use StrConv
@@ -88,8 +88,8 @@ Module Profile_Driver_Output
         Inquire(UNIT=UOUT, OPENED=o)
 
         If (o == .False.) Then
-		Open(UNIT=UOUT, FILE=Trim(file)//"_"//Trim(CStr(run))//".dat", FORM="UNFORMATTED", &
-		     STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
+             Open(UNIT=UOUT, FILE=Trim(file)//"_"//Trim(CStr(run))//".dat", FORM="UNFORMATTED", &
+                  STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
              If (flag /= 0) flag = -1
         Else
             Print *, "Output file already open!"
@@ -100,12 +100,12 @@ Module Profile_Driver_Output
     ! -------------------------------------------------------
 
     Subroutine WriteOutput(N, t, soln, mech, range, flag)
-	    ! DESCRIPTION:
-	    !	Writes unformatted output data to file and
+        ! DESCRIPTION:
+        !   Writes unformatted output data to file and
         !   writes some values to the console.
 
         Use Sweep
-        Use SWPCHEM, only: GetTemperature,GetRho
+        Use SWPCHEM, only: GetTemperature,GetRho,Getxx
         Use SWPSTATS_INDICES
         Use ConsoleTable
         Implicit None
@@ -125,19 +125,19 @@ Module Profile_Driver_Output
         ! EXECUTABLE CODE.
         flag = 0
         
-      !  stats = GetStats(soln, GetTemperature(soln%Chemistry, Real(t), Real(t)), range)
+        !  stats = GetStats(soln, GetTemperature(soln%Chemistry, Real(t), Real(t)), range)
         stats = GetStats(soln, GetRho(soln%Chemistry, Real(t), Real(t)), range)
         rates = Dble(SweepRateTerms(Real(t), GetSweepChem(soln%Chemistry, Real(t), Real(t), err), soln, mech, flag))
 
-        Call PrintScientificD(N, (/Dble(t), stats(iSP), stats(iM0), stats(iM1), stats(iSurf), stats(iDiam)/), 6)
-        Write(UOUT) t, stats, rates
+        Call PrintScientificD(N, (/Dble(Getxx(soln%Chemistry, Real(t), Real(t))), stats(iSP), stats(iM0), stats(iM3), stats(iAvgPrimPar), stats(iDiam)/), 6)
+        Write(UOUT) Getxx(soln%Chemistry, Real(t), Real(t)), stats, rates
     End Subroutine
 
     ! -------------------------------------------------------
 
     Subroutine EndOutput()
-	    ! DESCRIPTION:
-	    !	Closes the current output file.
+        ! DESCRIPTION:
+        !   Closes the current output file.
         Implicit None
         Integer :: err
         Close (UNIT=UOUT, IOSTAT=err)
@@ -146,8 +146,8 @@ Module Profile_Driver_Output
     ! -------------------------------------------------------
 
     Subroutine ProcessOutput(file, runs, N, mech, flag)
-	    ! DESCRIPTION:
-	    !	Processes unformatted output files for
+        ! DESCRIPTION:
+        !   Processes unformatted output files for
         !   multiple runs and returns averaged data in a CSV
         !   file.
 
@@ -177,8 +177,8 @@ Module Profile_Driver_Output
         er = 0.0D0
 
         Do irun = 1, runs
-		    Open(UNIT=UOUT, FILE=Trim(file)//"_"//Trim(CStr(irun))//".dat", FORM="UNFORMATTED", &
-		         STATUS="OLD", ACTION="READ", IOSTAT=flag)
+            Open(UNIT=UOUT, FILE=Trim(file)//"_"//Trim(CStr(irun))//".dat", FORM="UNFORMATTED", &
+                 STATUS="OLD", ACTION="READ", IOSTAT=flag)
 
             If (flag /= 0) Then
                 flag = -1
@@ -217,13 +217,13 @@ Module Profile_Driver_Output
         End If
 
         ! Write results to CSV file.
-		Open(UNIT=UOUT, FILE=Trim(file)//".csv", FORM="FORMATTED", &
-		     STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
+        Open(UNIT=UOUT, FILE=Trim(file)//".csv", FORM="FORMATTED", &
+             STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
     
         Write(UOUT, FMT=AFMT) "Step", "Time (s)", &
                               (Trim(StatNames(i)), i=1, NSTATS), &
                               (Trim(mech%GroupNames(i)), i=1, mech%GroupCount), &
-							  (Trim(StatNames(i)) // " Err", i=1, NSTATS), &
+                              (Trim(StatNames(i)) // " Err", i=1, NSTATS), &
                               (Trim(mech%GroupNames(i)) // " Err", i=1, mech%GroupCount)
         Do i = 1, N
             Write(UOUT, FMT=ESFMT) Dble(i-1), t(i), as(:,i), ar(:,i), es(:,i), er(:,i)
@@ -235,8 +235,8 @@ Module Profile_Driver_Output
     ! -------------------------------------------------------
 
     Subroutine WritePSL(file, run, num, t, soln, mech, flag)
-	    ! DESCRIPTION:
-	    !	Writes unformatted output data to file and
+        ! DESCRIPTION:
+        !   Writes unformatted output data to file and
         !   writes some values to the console.
 
         Use Sweep
@@ -261,7 +261,7 @@ Module Profile_Driver_Output
                             stats(NSTATS)
 
         ! EXECUTABLE CODE.
-		Open(UNIT=UPSL, FILE=Trim(file)//"_"//Trim(CStr(run))//"-psl_"//Trim(CStr(num))//".dat", &
+        Open(UNIT=UPSL, FILE=Trim(file)//"_"//Trim(CStr(run))//"-psl_"//Trim(CStr(num))//".dat", &
              FORM="UNFORMATTED", STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
        ! stats = GetStats(soln, GetTemperature(soln%Chemistry, t, t), range)
         stats = GetStats(soln, GetRho(soln%Chemistry, t, t), range)
@@ -274,8 +274,8 @@ Module Profile_Driver_Output
     ! -------------------------------------------------------
 
     Subroutine ProcessPSLs(file, runs, nums, N, mech, flag)
-	    ! DESCRIPTION:
-	    !	Writes unformatted output data to file and
+        ! DESCRIPTION:
+        !   Writes unformatted output data to file and
         !   writes some values to the console.
 
         Use Sweep
@@ -294,7 +294,8 @@ Module Profile_Driver_Output
         Integer :: irun, inum, i, j, pcount
         Double Precision :: M0(runs), psl(PSL_VAR_COUNT,N,runs), wt, &
                             pcl(mech%ComponentCount+mech%TrackerCount,N,runs)
-	    Character(LEN=*), Parameter :: M0FMT = "(ES,400(',,,',ES,:))"
+        Double Precision :: vol, surf, np, dp
+        Character(LEN=*), Parameter :: M0FMT = "(ES,400(',,,',ES,:))"
 
         ! EXECUTABLE CODE.
         Do inum = 1, nums
@@ -302,47 +303,30 @@ Module Profile_Driver_Output
             M0  = 0.0D0
             psl = 0.0D0
             Do irun = 1, runs
-		        Open(UNIT=UPSL, FILE=Trim(file)//"_"//Trim(CStr(irun))//"-psl_"//Trim(CStr(inum))//".dat", &
+                Open(UNIT=UPSL, FILE=Trim(file)//"_"//Trim(CStr(irun))//"-psl_"//Trim(CStr(inum))//".dat", &
                      FORM="UNFORMATTED", STATUS="OLD", ACTION="READ", IOSTAT=flag)
                 Read(UPSL) M0(irun), psl(:,:,irun), pcl(:,:,irun)
                 Close(UPSL, IOSTAT=flag)
             End Do
 
             ! Write PSL to CSV file.
-		    Open(UNIT=UPSL, FILE=Trim(file)//"-psl_"//Trim(CStr(inum))//".csv", &
+            Open(UNIT=UPSL, FILE=Trim(file)//"-psl_"//Trim(CStr(inum))//".csv", &
                  FORM="FORMATTED", STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
-!            Write(UPSL, FMT=M0FMT) M0(1:runs)
-!            Write(UPSL, FMT=AFMT) ("v", "s", "d", i=1, runs)
-!            Do i = 1, N
-!                Write(UPSL, FMT=ESFMT) Reshape(psl(:,i,1:runs),(/3*runs/))
-!            End Do
-            Write(UPSL, FMT=AFMT) "wt", "vol", "surf", "diam", "type", &
+            Write(UPSL, FMT=AFMT) "wt", "vol", "surf", "diam", "np", &
                                   (Trim(mech%Components(i)%Symbol), i=1, mech%ComponentCount), &
                                   (Trim(mech%Trackers(i)), i=1, mech%TrackerCount)
             Do i = 1, runs
                 pcount = Count(psl(1,:,i) > 0.0D0)
                 wt = M0(i) / Dble(pcount * runs)
                 Do j = 1, pcount
-                    Write(UPSL, FMT=ESFMT) wt, psl(1:4,j,i), pcl(:,j,i)
+                    vol  = psl(1,j,i)
+                    surf = psl(2,j,i)
+                    np   = surf**3/(36*PI*vol**2)
+                    dp   = (6*vol/PI/np)**(1.0/3)
+                    Write(UPSL, FMT=ESFMT) wt, vol, surf, dp, np, pcl(:,j,i)
                 End Do
             End Do
             Close(UPSL, IOSTAT=flag)
-
-            ! Write PCL to CSV file.
-!		    Open(UNIT=UPSL, FILE=Trim(file)//"-pcl("//Trim(CStr(inum))//").csv", &
-!                 FORM="FORMATTED", STATUS="REPLACE", ACTION="READWRITE", IOSTAT=flag)
-!            Write(UPSL, FMT=AFMT) 
-!            Write(UPSL, FMT=AFMT) "vol", "surf", "diam", "wt"
-!            Do i = 1, runs
-!                pcount = Count(psl(3,:,i) > 0.0D0)
-!                Do j = 1, pcount
-!                    Write(UPSL, FMT=ESFMT) psl(:,j,i), invM0(i)
-!                End Do
-!            End Do
-!            Do i = 1, N
-!                Write(UPSL, FMT=ESFMT) Reshape(pcl(:,i,1:runs),(/(mech%ComponentCount+mech%TrackerCount)*runs/))
-!            End Do
-!            Close(UPSL, IOSTAT=flag)
         End Do
     End Subroutine
     

@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					swpmech_reader.f90
-! Project:				Sweep 2
+! File:				swpmech_reader.f90
+! Project:			Sweep 2
 ! Author(s):			Matthew Celnik (msc37)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -37,7 +37,7 @@
 !   Website: como.cheng.cam.ac.uk
 !
 ! Purpose:
-!	A module for reading a soot mechanism from an XML file.  This module requires
+!   A module for reading a soot mechanism from an XML file.  This module requires
 !   that the xmlf90 library is included with the build.
 !
 ! Functions:
@@ -102,9 +102,9 @@ Module SWPMECH_READER
     ! Inception and condensation reading.
     Real, Private :: m_m(2), m_d(2)
 
-	Contains
+    Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine ReadMechXML(file, mech, speciesNames, flag)
         ! DESCRIPTION.
@@ -117,7 +117,7 @@ Module SWPMECH_READER
         Character(LEN=*), Intent(IN) :: file            ! File name.
         Type(Mechanism), Intent(OUT) :: mech            ! Mechanism to return.
         Character(LEN=*), Intent(IN) :: speciesNames(:) ! Names of gas-phase chemistry species.
-		Integer, Intent(OUT)         :: flag            ! Error flag.
+        Integer, Intent(OUT)         :: flag            ! Error flag.
 
         ! VARIABLES.
         Type(xml_t) :: fxml
@@ -143,7 +143,6 @@ Module SWPMECH_READER
         parseInception    = .False.
         parseReaction     = .False.
         parseCondensation = .False.
-!        parseTransform    = .False.
         parseCoag         = .False.
         parseFormula      = .False.
         parseReactant     = .False.
@@ -241,13 +240,13 @@ Module SWPMECH_READER
         Call DeallocateTempMemory()
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
     ! XMLF90 HANDLER ROUTINES.
     !
     !   These routines are called by xmlf90 when parsing the
     !   mechanism file.
     !
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine BeginElement(name, attributes)
         ! DESCRIPTION.
@@ -797,7 +796,7 @@ Module SWPMECH_READER
         End Select
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine EndElement(name)
         ! DESCRIPTION.
@@ -860,7 +859,7 @@ Module SWPMECH_READER
         End Select
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine HandleData(chunk)
         ! DESCRIPTION.
@@ -916,7 +915,7 @@ Module SWPMECH_READER
         End If
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
     ! PROCESS COMPLETION ROUTINES.
     !
     !   These routines are called by when an inception or
@@ -924,7 +923,7 @@ Module SWPMECH_READER
     !   They are used to complete any missing parts from the
     !   reaction types.
     !
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine CompleteInception(i)
         ! DESCRIPTION.
@@ -939,21 +938,21 @@ Module SWPMECH_READER
         Integer, Intent(IN) :: i ! Index of inception reaction.
 
         ! EXECUTABLE CODE.
-        Call SlipFlowK(m_d(1), m_d(2), m_mech%Inceptions(i)%ksf1, m_mech%Inceptions(i)%ksf2)
-        m_mech%Inceptions(i)%kfm = 2.5E0/2.2E0*FreeMolK(m_d(1), m_d(2), m_m(1), m_m(2))
+        Call NucSlipFlowK(m_d(1), m_d(2), m_mech%Inceptions(i)%ksf1, m_mech%Inceptions(i)%ksf2)
+        m_mech%Inceptions(i)%kfm = NucFreeMolK(m_d(1), m_d(2), m_m(1), m_m(2))
         m_mech%Inceptions(i)%A   = m_mech%Inceptions(i)%A * 0.5E0
         m_mech%Inceptions(i)%dS  = EquivSphereSurface(m_mech%Inceptions(i)%dComp, &
                                                       m_mech%Components, m_mech%ComponentCount)
     End Subroutine
  
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine CompleteReaction(i)
         ! DESCRIPTION.
         !   Completes a surface reaction with all information
-        !   the is not explicitly in the XML file.
+        !   that is not explicitly in the XML file.
 
-		Use SWPPART
+        Use SWPPART
         Implicit None
 
         ! ARGUMENTS.
@@ -984,14 +983,14 @@ Module SWPMECH_READER
                              (m_mech%Reactions(i)%PTypeIn == m_mech%Reactions(i)%PTypeOut)
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine CompleteCondensation(i)
         ! DESCRIPTION.
         !   Completes a condensation reaction with all information
-        !   the is not explicitly in the XML file.
+        !   that is not explicitly in the XML file.
 
-		Use SWPCOAG
+        Use SWPCOAG
         USe SWPPART
         Implicit None
 
@@ -999,36 +998,36 @@ Module SWPMECH_READER
         Integer, Intent(IN) :: i ! Index of first (of 3) condensation reaction.
 
         ! VARIABLES.
-		Real :: k1, k2, k3, d, m
+	Real :: k1, k2, k3, d, m
 
         ! EXECUTABLE CODE.
         
-		! Get free-molecular condensation terms.
-		Call FreeMolCondTerms(m_d(1), m_m(1), k1, k2, k3)
+        ! Get free-molecular condensation terms.
+        Call FreeMolCondTerms(m_d(1), m_m(1), k1, k2, k3)
 
         ! Reaction 1.
-		m_mech%Reactions(i)%A  = m_mech%Reactions(i)%A * NA * k1
-		m_mech%Reactions(i)%n  = 0.5E0
-		m_mech%Reactions(i)%E  = 0.0E0
-		m_mech%Reactions(i)%ID = UNIFORM_ID
+        m_mech%Reactions(i)%A  = m_mech%Reactions(i)%A * NA * k1
+        m_mech%Reactions(i)%n  = 0.5E0
+        m_mech%Reactions(i)%E  = 0.0E0
+        m_mech%Reactions(i)%ID = UNIFORM_ID
 
         ! Reaction 2.
-		m_mech%Reactions(i+1)%A  = m_mech%Reactions(i+1)%A * NA * k2
-		m_mech%Reactions(i+1)%n  = 0.5E0
-		m_mech%Reactions(i+1)%E  = 0.0E0
-		m_mech%Reactions(i+1)%ID = iD
+        m_mech%Reactions(i+1)%A  = m_mech%Reactions(i+1)%A * NA * k2
+        m_mech%Reactions(i+1)%n  = 0.5E0
+        m_mech%Reactions(i+1)%E  = 0.0E0
+        m_mech%Reactions(i+1)%ID = iD
 
         ! Reaction 3.
-		m_mech%Reactions(i+2)%A  = m_mech%Reactions(i+2)%A * NA * k3
-		m_mech%Reactions(i+2)%n  = 0.5E0
-		m_mech%Reactions(i+2)%E  = 0.0E0
-		m_mech%Reactions(i+2)%ID = iD2
+        m_mech%Reactions(i+2)%A  = m_mech%Reactions(i+2)%A * NA * k3
+        m_mech%Reactions(i+2)%n  = 0.5E0
+        m_mech%Reactions(i+2)%E  = 0.0E0
+        m_mech%Reactions(i+2)%ID = iD2
 
         ! All reactions.
         If (Sum(m_mech%Reactions(i)%dComp) > 0.0E0) Then
             m_mech%Reactions(i)%dSID   = GROWTH_RADIUS
             m_mech%Reactions(i+1)%dSID = GROWTH_RADIUS
-           m_mech%Reactions(i+2)%dSID = GROWTH_RADIUS
+            m_mech%Reactions(i+2)%dSID = GROWTH_RADIUS
         Else
             m_mech%Reactions(i)%dSID   = OXIDATION_RADIUS
             m_mech%Reactions(i+1)%dSID = OXIDATION_RADIUS
@@ -1036,7 +1035,7 @@ Module SWPMECH_READER
         End If
     End Subroutine
        
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Integer Function AllocateTempMemory(nsp)
         ! DESCRIPTION.
@@ -1044,7 +1043,7 @@ Module SWPMECH_READER
         !   mechanism from a XML file.
         Implicit None
         Integer, Intent(IN) :: nsp
-		Integer :: err
+        Integer :: err
 
         Allocate(m_mech%Inceptions(MAXICNS), m_mech%Reactions(MAXRXNS), &
                  m_mech%Groups(MAXGRPS), m_mech%GroupNames(MAXGRPS), &
@@ -1067,14 +1066,14 @@ Module SWPMECH_READER
         End If
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine DeallocateTempMemory()
         ! DESCRIPTION.
         !   Deallocates temporary memory used to read a
         !   mechanism from a XML file.
         Implicit None
-		Integer :: err
+        Integer :: err
         Deallocate(m_mech%Inceptions, m_mech%Reactions, &
                    m_mech%Groups, m_mech%GroupNames, &
                    m_mech%DeferMask, m_mech%ParticleTypeNames, &

@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					contable.f90
-! Project:				N/A.
+! File:				contable.f90
+! Project:			N/A.
 ! Author(s):			Matthew Celnik (msc37)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -35,159 +35,159 @@
 !   Website: como.cheng.cam.ac.uk
 !
 ! Purpose:
-!	This module contains routines which allow tables of numerical values
-!	to be printed to the console.  Various standard formats are included.
+!   This module contains routines which allow tables of numerical values
+!   to be printed to the console.  Various standard formats are included.
 !
 ! Functions:
-!	PrintHeader				-	Prints a header row to the console with
-!								the given column names.
-!	PrintScientific			-	Prints a data row where the columns are numbers
-!								given in scientific form.
+!   PrintHeader			-	Prints a header row to the console with
+!						the given column names.
+!   PrintScientific		-	Prints a data row where the columns are numbers
+!						given in scientific form.
 ! *****************************************************************************
 
 
 Module ConsoleTable
-	Implicit None
-	Public
+    Implicit None
+    Public
 
-	! -------------------------------------------------------
-	! CONSOLE TABLE PARAMETERS.
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! CONSOLE TABLE PARAMETERS.
+    ! -------------------------------------------------------
 
-	! Maximum number of columns allowed in the table (Note
-	! the leftmost column is also a row number, so this value
-	! is the number of columns not including the leftmost).
-	Integer, Parameter		::	MAX_COLS = 6
+    ! Maximum number of columns allowed in the table (Note
+    ! the leftmost column is also a row number, so this value
+    ! is the number of columns not including the leftmost).
+    Integer, Parameter :: MAX_COLS = 6
 
-	! -------------------------------------------------------
-	! STANDARD TABLE FORMATS.
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! STANDARD TABLE FORMATS.
+    ! -------------------------------------------------------
 
-	! Header row format.
-	Character(LEN=*), Parameter	::	HEAD	= "('| ',A4,6(' |  ',A8),' |')"
+    ! Header row format.
+    Character(LEN=*), Parameter :: HEAD = "('| ',A4,6(' |  ',A8),' |')"
 
-	! Dividing lines.
-	Character(LEN=*), Parameter	::	DIV1	= "('|-',4('-'),6('-|-',9('-')),'-|')"
+    ! Dividing lines.
+    Character(LEN=*), Parameter :: DIV1 = "('|-',4('-'),6('-|-',9('-')),'-|')"
 
-	! Numerical data rows.
-	Character(LEN=*), Parameter	::	SCI		= "('| ',I4.4,6(' | ',ES9.2E2),' |')"
-	Character(LEN=*), Parameter	::	FLOAT	= "('| ',I4.4,6(' | ',F9.5),' |')"
-	Character(LEN=*), Parameter	::	INT		= "('| ',I4.4,6(' | ',I9),' |')"
+    ! Numerical data rows.
+    Character(LEN=*), Parameter :: SCI          = "('| ',I4.4,6(' | ',ES9.2E2),' |')"
+    Character(LEN=*), Parameter :: FLOAT        = "('| ',I4.4,6(' | ',F9.5),' |')"
+    Character(LEN=*), Parameter :: INT          = "('| ',I4.4,6(' | ',I9),' |')"
 
-	! Column formats.
-	Character(LEN=*), Parameter	::	SCICOL		= "ES9.2E2"
-	Character(LEN=*), Parameter	::	FLOATCOL	= "F9.5"
-	Character(LEN=*), Parameter	::	FLOAT2COL	= "F9.2"
-	Character(LEN=*), Parameter	::	INTCOL		= "I9"
-	
-	Contains
+    ! Column formats.
+    Character(LEN=*), Parameter :: SCICOL       = "ES9.2E2"
+    Character(LEN=*), Parameter :: FLOATCOL     = "F9.5"
+    Character(LEN=*), Parameter :: FLOAT2COL    = "F9.2"
+    Character(LEN=*), Parameter :: INTCOL       = "I9"
 
-	! -------------------------------------------------------
+    Contains
 
-	Subroutine PrintHeader(leftmost, cols, ncols)
-		! DESCRIPTION:
-		!	Prints a header row to the console.
-		
-		Implicit None
+    ! -------------------------------------------------------
 
-		! ARGUMENTS.
-		Integer, Intent(IN)	::	ncols	! Number of columns after the first.
-		Character(LEN=*)	::	leftmost, cols(ncols)	! Column headings.
+    Subroutine PrintHeader(leftmost, cols, ncols)
+        ! DESCRIPTION:
+        !	Prints a header row to the console.
 
-		! EXECUTABLE CODE.
-		Print DIV1
-		Print HEAD, leftmost(1:4), cols(1:Min(ncols, MAX_COLS))
-		Print DIV1
-	End Subroutine
+        Implicit None
 
-	! -------------------------------------------------------
+        ! ARGUMENTS.
+        Integer, Intent(IN)    :: ncols ! Number of columns after the first.
+        Character(LEN=*)       :: leftmost, cols(ncols) ! Column headings.
 
-	Subroutine PrintScientific(row, vals, nvals)
-		! DESCRIPTION:
-		!	Prints a data row using scientific notation for
-		!	the numbers.  Requires the values to be given
-		!	as reals (single precision).
-		
-		Implicit None
+        ! EXECUTABLE CODE.
+        Print DIV1
+        Print HEAD, leftmost(1:4), cols(1:Min(ncols, MAX_COLS))
+        Print DIV1
+    End Subroutine
 
-		! ARGUMENTS.
-		! Row number (used to determine if header row should
-		! be reprinted).
-		Integer, Intent(IN)	::	row
-		! Values in the remaining columns.
-		Integer, Intent(IN)	::	nvals
-		Real, Intent(IN)	::	vals(nvals)
+    ! -------------------------------------------------------
 
-		! EXECUTABLE CODE.
-		Print SCI, row, vals(1:Min(nvals, MAX_COLS))
-	End Subroutine
+    Subroutine PrintScientific(row, vals, nvals)
+        ! DESCRIPTION:
+        !   Prints a data row using scientific notation for
+        !   the numbers.  Requires the values to be given
+        !   as reals (single precision).
+     
+        Implicit None
 
-	! -------------------------------------------------------
+        ! ARGUMENTS.
+        ! Row number (used to determine if header row should
+        ! be reprinted).
+        Integer, Intent(IN)     :: row
+        ! Values in the remaining columns.
+        Integer, Intent(IN)     :: nvals
+        Real, Intent(IN)        :: vals(nvals)
 
-	Subroutine PrintScientificD(row, vals, nvals)
-		! DESCRIPTION:
-		!	Prints a data row using scientific notation for
-		!	the numbers.  Requires the values to be given
-		!	as reals (single precision).
-		
-		Implicit None
+        ! EXECUTABLE CODE.
+        Print SCI, row, vals(1:Min(nvals, MAX_COLS))
+    End Subroutine
 
-		! ARGUMENTS.
-		! Row number (used to determine if header row should
-		! be reprinted).
-		Integer, Intent(IN)	::	row
-		! Values in the remaining columns.
-		Integer, Intent(IN)	::	nvals
-		Double Precision, Intent(IN) :: vals(nvals)
+    ! -------------------------------------------------------
 
-		! EXECUTABLE CODE.
-		Print SCI, row, vals(1:Min(nvals, MAX_COLS))
-	End Subroutine
+    Subroutine PrintScientificD(row, vals, nvals)
+        ! DESCRIPTION:
+        !   Prints a data row using scientific notation for
+        !   the numbers.  Requires the values to be given
+        !   as reals (single precision).
+        
+        Implicit None
 
-	! -------------------------------------------------------
+        ! ARGUMENTS.
+        ! Row number (used to determine if header row should
+        ! be reprinted).
+        Integer, Intent(IN) :: row
+        ! Values in the remaining columns.
+        Integer, Intent(IN) ::nvals
+        Double Precision, Intent(IN) :: vals(nvals)
 
-	Subroutine PrintCustom(row, vals, nvals, fmt)
-		! DESCRIPTION:
-		!	Prints a data row using custom formats for each
+        ! EXECUTABLE CODE.
+        Print SCI, row, vals(1:Min(nvals, MAX_COLS))
+    End Subroutine
+
+    ! -------------------------------------------------------
+
+    Subroutine PrintCustom(row, vals, nvals, fmt)
+        ! DESCRIPTION:
+        !   Prints a data row using custom formats for each
         !   column.  Requires the values to be given
-		!	as reals (single precision).
-		
-		Implicit None
+        !   as reals (single precision).
 
-		! ARGUMENTS.
-		Integer, Intent(IN)	      :: row	     ! Row number.
-		Integer, Intent(IN)	      :: nvals       ! Number of columns.
-		Real, Intent(IN)	      :: vals(nvals) ! Values in the remaining columns.
+        Implicit None
+
+        ! ARGUMENTS.
+        Integer, Intent(IN)          :: row         ! Row number.
+        Integer, Intent(IN)          :: nvals       ! Number of columns.
+        Real, Intent(IN)             :: vals(nvals) ! Values in the remaining columns.
         Character(LEN=*), Intent(IN) :: fmt         ! Format for output.
 
-		! EXECUTABLE CODE.
-		Print fmt, row, vals(1:Min(nvals, MAX_COLS))
-	End Subroutine
+        ! EXECUTABLE CODE.
+        Print fmt, row, vals(1:Min(nvals, MAX_COLS))
+    End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Subroutine CreateCustomFormat(fmt, colfmts, nvals)
-		! DESCRIPTION:
-		!	Prints a data row using custom formats for each
+    Subroutine CreateCustomFormat(fmt, colfmts, nvals)
+        ! DESCRIPTION:
+        !   Prints a data row using custom formats for each
         !   column.  Requires the values to be given
-		!	as reals (single precision).
-		
-		Implicit None
+        !   as reals (single precision).
 
-		! ARGUMENTS.
+        Implicit None
+
+        ! ARGUMENTS.
         Character(LEN=*), Intent(OUT) :: fmt            ! Generated format
-		Integer, Intent(IN)	       :: nvals          ! Number of columns.
+        Integer, Intent(IN)           :: nvals          ! Number of columns.
         Character(LEN=*), Intent(IN)  :: colfmts(nvals) ! Formats for each column.
 
         ! VARIABLES.
         Integer :: i
 
-		! EXECUTABLE CODE.
+        ! EXECUTABLE CODE.
         fmt = "('| ',I4.4,"
         Do i = 1, nvals
             fmt = Trim(fmt) // "' | '," // Trim(colfmts(i))
         End Do
-		fmt = Trim(fmt) // ",' |')"
-	End Subroutine
+        fmt = Trim(fmt) // ",' |')"
+    End Subroutine
 
 End Module
