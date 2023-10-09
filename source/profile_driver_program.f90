@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					profile_driver_program.f90
-! Project:				Sweep 2
+! File:				profile_driver_program.f90
+! Project:			Sweep 2
 ! Author(s):			Matthew Celnik (msc37) & Rob Patterson (riap2)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -60,9 +60,10 @@ Program Profile_Driver_Program
 
     ! Counters and time step variables.
     Integer :: err, i, irun, iint
-    Real :: t, tstop, dt
+    Real :: t, tstop, dt, start, finish
 
     ! EXECUTABLE CODE.
+    call cpu_time(start)
 
     ! Load settings file.
     Call CommandLine(sim)
@@ -109,9 +110,9 @@ Program Profile_Driver_Program
             Print "(X,A,I3,A,I3)", "Run ", irun, " / ", sim%Runs
 
             ! Reset Sweep solution.
-	        Call ClearEnsemble(soln%Ensemble)
-	 !       Call SetScaling(soln, sim%MaxM0, MaxVal(chem%Chem(chem%iT,:)))
-	        Call SetScaling(soln, sim%MaxM0, MinVal(chem%Chem(chem%irho,:)))
+            Call ClearEnsemble(soln%Ensemble)
+            ! Call SetScaling(soln, sim%MaxM0, MaxVal(chem%Chem(chem%iT,:)))
+            Call SetScaling(soln, sim%MaxM0, MinVal(chem%Chem(chem%irho,:)))
 
             ! Start output.
             t = sim%Times%Items(1)
@@ -149,5 +150,8 @@ Program Profile_Driver_Program
     ! Clear memory.
     Call DeleteSweepSolution(soln)
     Call DeleteSweepMechanism(mech)
+    ! CPU time
+    call cpu_time(finish)
+    print '("Time = ",f4.0," seconds.")',finish-start
 End Program
 

@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					list_t.f90
-! Project:				N/A.
+! File:				list_t.f90
+! Project:			N/A.
 ! Author(s):			Matthew Celnik (msc37)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -35,7 +35,7 @@
 !   Website: como.cheng.cam.ac.uk
 !
 ! Purpose:
-!	An implementation of a variable length list of different types.  Currently
+!   An implementation of a variable length list of different types.  Currently
 !   included list types are:
 !
 !   > Double Precision (LIST_DP).
@@ -74,7 +74,7 @@ Module LIST_DP_T
 
     Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine Destroy(list)
         ! DESCRIPTION
@@ -92,7 +92,7 @@ Module LIST_DP_T
         Nullify(list%Items)
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine SetP(new, old)
         ! DESCRIPTION
@@ -108,7 +108,7 @@ Module LIST_DP_T
         new%Items => old%Items
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine Copy(new, old)
         ! DESCRIPTION
@@ -123,7 +123,7 @@ Module LIST_DP_T
         new%Items = old%Items
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function Add(list1, list2) Result (sumlist)
         ! DESCRIPTION
@@ -154,7 +154,7 @@ Module LIST_DP_T
         sumlist%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddItem(list, item) Result (newlist)
         ! DESCRIPTION
@@ -185,7 +185,7 @@ Module LIST_DP_T
         newlist%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddItems(list, items) Result (newlist)
         ! DESCRIPTION
@@ -216,7 +216,7 @@ Module LIST_DP_T
         newlist%Items = allitems
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Double Precision Function SumList(list)
         ! DESCRIPTION
@@ -250,7 +250,7 @@ Module LIST_INT_T
 
     Contains
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine Destroy(list)
         ! DESCRIPTION
@@ -268,7 +268,7 @@ Module LIST_INT_T
         Nullify(list%Items)
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine SetP(new, old)
         ! DESCRIPTION
@@ -284,7 +284,7 @@ Module LIST_INT_T
         new%Items => old%Items
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Subroutine Copy(new, old)
         ! DESCRIPTION
@@ -299,7 +299,7 @@ Module LIST_INT_T
         new%Items = old%Items
     End Subroutine
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function Add(list1, list2) Result (sumlist)
         ! DESCRIPTION
@@ -330,7 +330,7 @@ Module LIST_INT_T
         sumlist%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddItem(list, item) Result (newlist)
         ! DESCRIPTION
@@ -361,7 +361,7 @@ Module LIST_INT_T
         newlist%Items = items
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Function AddItems(list, items) Result (newlist)
         ! DESCRIPTION
@@ -392,7 +392,7 @@ Module LIST_INT_T
         newlist%Items = allitems
     End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
     Integer Function SumList(list)
         ! DESCRIPTION

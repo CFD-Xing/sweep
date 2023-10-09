@@ -1,7 +1,7 @@
 ! *****************************************************************************
 !
-! File:					strconv.f90
-! Project:				N/A.
+! File:				strconv.f90
+! Project:			N/A.
 ! Author(s):			Matthew Celnik (msc37)
 !
 ! Copyright (C) 2006  Matthew S Celnik
@@ -35,181 +35,180 @@
 !   Website: como.cheng.cam.ac.uk
 !
 ! Purpose:
-!	This module contains routines for converting numerical values into
-!	strings.  This functionality is curiously complicated in F90.
+!   This module contains routines for converting numerical values into
+!   strings.  This functionality is curiously complicated in F90.
 !
-!	This module also contains routines for processing file names, such as
-!	returning the file extension, or the file name when given a path.
+!   This module also contains routines for processing file names, such as
+!   returning the file extension, or the file name when given a path.
 !
 ! Functions:
-!	IntStr			-	Converts an integer to a string of 9 digits.  The string
+!   IntStr			-	Converts an integer to a string of 9 digits.  The string
 !						starts at the beginning of the character array.
-!	FStr			-	Converts a single precision number to a string of 9
+!   FStr			-	Converts a single precision number to a string of 9
 !						characters.
-!	ESStr			-	Converts a double precision number to a string of 9
+!   ESStr			-	Converts a double precision number to a string of 9
 !						characters.
 !	---------------------------------------------------------------------------
-!	GetFileNameNoExtension	-	Gets the part of the filename before the
-!								extension.
-!	GetFileExtension	-	Gets the file extension for the given file name.
+!   GetFileNameNoExtension	-	Gets the part of the filename before the
+!						extension.
+!   GetFileExtension	        -	Gets the file extension for the given file name.
 !	---------------------------------------------------------------------------
-!	IndexOf			-	Returns the index of a string in an array of strings.
-!   SplitString     -   Splits a string into substrings, delimited with the given
-!                       string.
+!   IndexOf			-	Returns the index of a string in an array of strings.
+!   SplitString                 -       Splits a string into substrings, delimited with the given
+!                                               string.
 ! *****************************************************************************
 
 
 Module StrConv
-	! -------------------------------------------------------
-	! IMPORT REQUIRED MODULES.
-	! -------------------------------------------------------
-	! None.
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! IMPORT REQUIRED MODULES.
+    ! -------------------------------------------------------
+    ! None.
+    ! -------------------------------------------------------
 
-	Implicit None
-	Public
+    Implicit None
+    Public
 
-	Interface CStr
-		Module Procedure IntStr
-!		Module Procedure FStr
-		Module Procedure ESStr
-	End Interface
+    Interface CStr
+        Module Procedure IntStr
+        Module Procedure ESStr
+    End Interface
 
-	Contains
+    Contains
 
-	! -------------------------------------------------------
-	! NUMERICAL CONVERSION ROUTINES.
-	!
-	!	These routines convert numerical values to 9
-	!	character strings.  These functions are all wrapped
-	!	in the CStr interface above.
-	!
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! NUMERICAL CONVERSION ROUTINES.
+    !
+    !   These routines convert numerical values to 9
+    !   character strings.  These functions are all wrapped
+    !   in the CStr interface above.
+    !
+    ! -------------------------------------------------------
 
-	Function IntStr(i) Result(sint)
+    Function IntStr(i) Result(sint)
 
-		! DESCRIPTION:
-		!	Converts an integer into a string of 9 characters.
-		!
-		! RETURNS:
-		!	A 9 character long string representation of the
-		!	integer.  String may include blank spaces after
-		!	the number.
-	
-		! ARGUMENTS.
-		Integer, Intent(IN)	::	i
+        ! DESCRIPTION:
+        !   Converts an integer into a string of 9 characters.
+        !
+        ! RETURNS:
+        !   A 9 character long string representation of the
+        !   integer.  String may include blank spaces after
+        !   the number.
 
-		! VARIABLES.
-		Character(LEN=6)	::	ft
-                Character(LEN=9)        :: sint
+        ! ARGUMENTS.
+        Integer, Intent(IN)     :: i
 
-		! EXECUTABLE CODE.
-		If (i > 99999999) Then
-			ft = "(I9.9)"
-		ElseIf (i > 9999999) Then
-			ft = "(I8.8)"
-		ElseIf (i > 999999) Then
-			ft = "(I7.7)"
-		ElseIf (i > 99999) Then
-			ft = "(I6.6)"
-		ElseIf (i > 9999) Then
-			ft = "(I5.5)"
-		ElseIf (i > 999) Then
-			ft = "(I4.4)"
-		ElseIf (i > 99) Then
-			ft = "(I3.3)"
-		ElseIf (i > 9) Then
-			ft = "(I2.2)"
-		Else
-			ft = "(I1.1)"
-		End If
+        ! VARIABLES.
+        Character(LEN=6)        :: ft
+        Character(LEN=9)        :: sint
+
+        ! EXECUTABLE CODE.
+        If (i > 99999999) Then
+            ft = "(I9.9)"
+        ElseIf (i > 9999999) Then
+           ft = "(I8.8)"
+        ElseIf (i > 999999) Then
+           ft = "(I7.7)"
+        ElseIf (i > 99999) Then
+           ft = "(I6.6)"
+        ElseIf (i > 9999) Then
+           ft = "(I5.5)"
+        ElseIf (i > 999) Then
+           ft = "(I4.4)"
+        ElseIf (i > 99) Then
+           ft = "(I3.3)"
+        ElseIf (i > 9) Then
+           ft = "(I2.2)"
+        Else
+           ft = "(I1.1)"
+        End If
         
-		sint = ""
-		Write (sint, FMT=ft) i
-	End Function
+        sint = ""
+        Write (sint, FMT=ft) i
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Character(LEN=9) Function FStr(float)
-		! DESCRIPTION:
-		!	Converts an double into a string of 9 characters.
-		!
-		! RETURNS:
-		!	A 9 character long string representation of the
-		!	integer.  String may include blank spaces after
-		!	the number.
-	
-		! ARGUMENTS.
+    Character(LEN=9) Function FStr(float)
+        ! DESCRIPTION:
+        !   Converts an double into a string of 9 characters.
+        !
+        ! RETURNS:
+        !   A 9 character long string representation of the
+        !   integer.  String may include blank spaces after
+        !   the number.
 
-		Real, Intent(IN)	::	float
+        ! ARGUMENTS.
 
-		! VARIABLES.
+        Real, Intent(IN) :: float
 
-		Character(LEN=*), Parameter	::	fmt = "ES8.2E2"
+        ! VARIABLES.
 
-		! EXECUTABLE CODE.
+        Character(LEN=*), Parameter :: fmt = "ES8.2E2"
 
-		FStr = ""
-		Write (FStr, "(" // fmt // ")") float
-	End Function
+        ! EXECUTABLE CODE.
 
-	! -------------------------------------------------------
+        FStr = ""
+        Write (FStr, "(" // fmt // ")") float
+    End Function
 
-	Character(LEN=9) Function ESStr(float, how)
-		! DESCRIPTION:
-		!	Converts an double into a string of 9 characters
-		!	in scientific format.
-		!
-		! RETURNS:
-		!	A 9 character long string representation of the
-		!	integer.  String may include blank spaces after
-		!	the number.
-	
-		! ARGUMENTS.
-		Double Precision, Intent(IN)	::	float
-		Integer, Intent(IN), Optional	::	how
+    ! -------------------------------------------------------
 
-		! VARIABLES.
+    Character(LEN=9) Function ESStr(float, how)
+        ! DESCRIPTION:
+        !   Converts an double into a string of 9 characters
+        !   in scientific format.
+        !
+        ! RETURNS:
+        !   A 9 character long string representation of the
+        !   integer.  String may include blank spaces after
+        !   the number.
 
-		Character(LEN=*), Parameter	::	fmt1 = "ES8.2E2"
-		Character(LEN=*), Parameter	::	fmt2 = "F8.2"
+        ! ARGUMENTS.
+        Double Precision, Intent(IN)  :: float
+        Integer, Intent(IN), Optional :: how
 
-		! EXECUTABLE CODE.
-		ESStr = ""
+        ! VARIABLES.
 
-		If (Present(how)) Then
-			If (how == 1) Then
-				Write (ESStr, "(" // fmt2 // ")") float
-			Else
-				Write (ESStr, "(" // fmt1 // ")") float
-			End If
-		Else
-			Write (ESStr, "(" // fmt1 // ")") float
-		End If
-	End Function
+        Character(LEN=*), Parameter :: fmt1 = "ES8.2E2"
+        Character(LEN=*), Parameter :: fmt2 = "F8.2"
 
-	! -------------------------------------------------------
+        ! EXECUTABLE CODE.
+        ESStr = ""
 
-	Real Function CReal(str, def)
-		! DESCRIPTION:
-		!	Converts an a string into a real number, returning
+        If (Present(how)) Then
+            If (how == 1) Then
+                Write (ESStr, "(" // fmt2 // ")") float
+            Else
+                Write (ESStr, "(" // fmt1 // ")") float
+            End If
+        Else
+            Write (ESStr, "(" // fmt1 // ")") float
+        End If
+    End Function
+
+    ! -------------------------------------------------------
+
+    Real Function CReal(str, def)
+        ! DESCRIPTION:
+        !   Converts an a string into a real number, returning
         !   a default value if there is an error.
-		!
-		! RETURNS:
-		!	A 9 character long string representation of the
-		!	integer.  String may include blank spaces after
-		!	the number.
-	
-		! ARGUMENTS.
-		Character(LEN=*), Intent(IN)  :: str ! String to convert.
+        !
+        ! RETURNS:
+        !   A 9 character long string representation of the
+        !   integer.  String may include blank spaces after
+        !   the number.
+
+        ! ARGUMENTS.
+        Character(LEN=*), Intent(IN)  :: str ! String to convert.
 		Real, Intent(IN), Optional :: def ! Default value.
 
-		! VARIABLES.
+        ! VARIABLES.
         Integer :: err, x
         Real    :: defval
-		
-		! EXECUTABLE CODE.
-		
+
+        ! EXECUTABLE CODE.
+
         If (Present(def)) Then
             defval = def
         Else
@@ -232,24 +231,24 @@ Module StrConv
             Read(str(1:Len_Trim(str)), FMT=*, IOSTAT=err) CReal
             If (err /= 0) CReal = defval
         End If
-	End Function
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Logical Function IsNumeric(str)
-		! DESCRIPTION:
-		!	Checks a string to see if it represents a number.
-		! RETURNS:
-		!	TRUE  = String is a number.
+    Logical Function IsNumeric(str)
+        ! DESCRIPTION:
+        !   Checks a string to see if it represents a number.
+        ! RETURNS:
+        !   TRUE  = String is a number.
         !   FALSE = String is not a number.
-	
-		! ARGUMENTS.
-		Character(LEN=*), Intent(IN) :: str ! String to test.
 
-		! VARIABLES.
+        ! ARGUMENTS.
+        Character(LEN=*), Intent(IN) :: str ! String to test.
+
+        ! VARIABLES.
         Integer :: i, j1, jdot, jexp, L
 
-		! EXECUTABLE CODE.
+        ! EXECUTABLE CODE.
         
         If (Len_Trim(str) < 1) Then
             IsNumeric = .False.
@@ -311,8 +310,7 @@ Module StrConv
                             If (jexp+2 <= L) IsNumeric = IsInteger(str(jexp+2:))
                         Else
                             IsNumeric = .False.
-                        
-End If
+                        End If
                     Else
                         ! There is no exponent marker in the string
                         ! or it is at the end of the string.  Both wrong.
@@ -321,25 +319,25 @@ End If
                 End If
             End If
         End If
-	End Function
+    End Function
 
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
 
-	Logical Function IsInteger(str)
-		! DESCRIPTION:
-		!	Checks a string to see if it represents an integer.
-		! RETURNS:
-		!	TRUE  = String is an integer.
+    Logical Function IsInteger(str)
+        ! DESCRIPTION:
+        !   Checks a string to see if it represents an integer.
+        ! RETURNS:
+        !   TRUE  = String is an integer.
         !   FALSE = String is not an integer.
-	
-		! ARGUMENTS.
-		Character(LEN=*), Intent(IN) :: str ! String to test.
 
-		! VARIABLES.
+        ! ARGUMENTS.
+        Character(LEN=*), Intent(IN) :: str ! String to test.
+
+        ! VARIABLES.
         Integer :: i, L
         Character :: c
 
-		! EXECUTABLE CODE.
+        ! EXECUTABLE CODE.
         IsInteger = .True.
 
         ! Check first character.
@@ -354,156 +352,156 @@ End If
                 End If
             End Do
         End If
-	End Function
+    End Function
 
-	! -------------------------------------------------------
-	! FILE NAME PROCESSING ROUTINES
-	!
-	!	These routines process file names.  For example
-	!	returning the file extension given the file name.
-	!
-	! -------------------------------------------------------
+    ! -------------------------------------------------------
+    ! FILE NAME PROCESSING ROUTINES
+    !
+    !   These routines process file names.  For example
+    !   returning the file extension given the file name.
+    !
+    ! -------------------------------------------------------
 
-	Subroutine GetFileNameNoExtension(file, name)
+    Subroutine GetFileNameNoExtension(file, name)
 
-		! DESCRIPTION:
-		!	Takes a file name and returns the part before
-		!	the extension (not including the full-stop).
-		!
-		! RETURNS:
-		!	The file name with the file extension removed.
-	
-		! ARGUMENTS.
+        ! DESCRIPTION:
+        !   Takes a file name and returns the part before
+        !   the extension (not including the full-stop).
+        !
+        ! RETURNS:
+        !   The file name with the file extension removed.
 
-		Character*(*), Intent(IN)	::	file
-		Character*(*), Intent(OUT)	::	name
+        ! ARGUMENTS.
 
-		! VARIABLES.
+        Character*(*), Intent(IN)  :: file
+        Character*(*), Intent(OUT) :: name
 
-		Integer		::	idot
+        ! VARIABLES.
 
-		! EXECUTABLE CODE.
+        Integer :: idot
 
-		idot = Index(file, ".", .True.)
+        ! EXECUTABLE CODE.
 
-		If ((idot > 0) .And. (idot <= Len_Trim(file))) Then
-			name = file(1:idot-1)
-		End If
+        idot = Index(file, ".", .True.)
 
-	End Subroutine
+        If ((idot > 0) .And. (idot <= Len_Trim(file))) Then
+           name = file(1:idot-1)
+        End If
 
-	! -------------------------------------------------------
+    End Subroutine
 
-	Subroutine GetFileExtension(file, ext)
+    ! -------------------------------------------------------
 
-		! DESCRIPTION:
-		!	Takes a file name and returns the extension, that
-		!	is the part after the last full-stop.
-		!
-		! RETURNS:
-		!	The file extension.
-	
-		! ARGUMENTS.
+    Subroutine GetFileExtension(file, ext)
 
-		Character*(*), Intent(IN)	::	file
-		Character*(*), Intent(OUT)	::	ext
+        ! DESCRIPTION:
+        !   Takes a file name and returns the extension, that
+        !   is the part after the last full-stop.
+        !
+        ! RETURNS:
+        !   The file extension.
 
-		! VARIABLES.
+        ! ARGUMENTS.
 
-		Integer		::	idot
+        Character*(*), Intent(IN)  :: file
+        Character*(*), Intent(OUT) :: ext
 
-		! EXECUTABLE CODE.
+        ! VARIABLES.
 
-		idot = Index(file, ".", .True.)
+        Integer :: idot
 
-		If ((idot > 0) .And. (idot <= Len_Trim(file))) Then
-			ext = file(idot+1:Len_Trim(file))
-		End If
+        ! EXECUTABLE CODE.
 
-	End Subroutine
+        idot = Index(file, ".", .True.)
 
-	! -------------------------------------------------------
+        If ((idot > 0) .And. (idot <= Len_Trim(file))) Then
+            ext = file(idot+1:Len_Trim(file))
+        End If
 
-	Integer Function IndexOf(s, list)
+    End Subroutine
 
-		! DESCRIPTION:
-		!	Locates a string in a list of strings, returns
-		!	0 if the string is not present.
-		!
-		! RETURNS:
-		!	Index of string in list.
+    ! -------------------------------------------------------
 
-		Implicit None
+    Integer Function IndexOf(s, list)
 
-		! ARGUMENTS.
+        ! DESCRIPTION:
+        !   Locates a string in a list of strings, returns
+        !   0 if the string is not present.
+        !
+        ! RETURNS:
+        !   Index of string in list.
 
-		! String to locate.
-		Character*(*), Intent(IN)	::	s
-		! List to find it in.
-		Character*(*), Intent(IN)	::	list(:)
+        Implicit None
 
-		! VARIABLES.
+        ! ARGUMENTS.
 
-		Integer	::	L, LTS, LTL, N, i, j
-		Logical	::	found
+        ! String to locate.
+        Character*(*), Intent(IN) :: s
+        ! List to find it in.
+        Character*(*), Intent(IN) :: list(:)
 
-		! EXECUTABLE CODE.
-		
-		N = Size(list)
+        ! VARIABLES.
 
-		If (N > 0) Then
-			IndexOf = 0
+        Integer :: L, LTS, LTL, N, i, j
+        Logical :: found
 
-			! Get the trimmed length of the
-			! string to find.
-			LTS = Len_Trim(s)
+        ! EXECUTABLE CODE.
 
-			! Get the minimum string length.
-			L = Min(LTS, Len(list(1)))
+        N = Size(list)
 
-			! Loop through string in list comparing
-			! each character.
-			Do i = 1, N
-				LTL = Len_Trim(list(i))
+        If (N > 0) Then
+            IndexOf = 0
 
-				! Check that the string length
-				! in the lsit is the same as the search
-				! string length.
-				If (LTL == L) Then
-					found = .True.
+            ! Get the trimmed length of the
+            ! string to find.
+            LTS = Len_Trim(s)
 
-					! Loop through all the characters
-					! in the strings.
-					Do j = 1, L
-						If (s(j:j) /= list(i)(j:j)) Then
-							found = .False.
-							Exit
-						End If
-					End Do
+            ! Get the minimum string length.
+            L = Min(LTS, Len(list(1)))
 
-					If (found) Then
-						IndexOf = i
-						Return
-					End If
-				End If
-			End Do
-		Else
-			! No items in list.
-			IndexOf = 0
-		End If
-	End Function
+            ! Loop through string in list comparing
+            ! each character.
+            Do i = 1, N
+                LTL = Len_Trim(list(i))
 
-	! -------------------------------------------------------
+                ! Check that the string length
+                ! in the lsit is the same as the search
+                ! string length.
+                If (LTL == L) Then
+                    found = .True.
 
-	Subroutine SplitString(str, delim, parts, lparts, nparts, mergeDelims, blanks)
-		! DESCRIPTION:
-		!	Splits a string into substrings using the given
+                    ! Loop through all the characters
+                    ! in the strings.
+                        Do j = 1, L
+                            If (s(j:j) /= list(i)(j:j)) Then
+                                found = .False.
+                                Exit
+                            End If
+                        End Do
+
+                        If (found) Then
+                           IndexOf = i
+                        Return
+                    End If
+                End If
+            End Do
+        Else
+           ! No items in list.
+           IndexOf = 0
+        End If
+    End Function
+
+    ! -------------------------------------------------------
+
+    Subroutine SplitString(str, delim, parts, lparts, nparts, mergeDelims, blanks)
+        ! DESCRIPTION:
+        !   Splits a string into substrings using the given
         !   delimiter.
 
-		Implicit None
+        Implicit None
 
-		! ARGUMENTS.
-		Character*(*), Intent(IN)     :: str, delim     ! The string to split and the delimiter.
+        ! ARGUMENTS.
+        Character*(*), Intent(IN)     :: str, delim     ! The string to split and the delimiter.
         Integer, Intent(IN)           :: lparts, nparts ! Length of a substring and max. number
                                                         ! of substrings.
         Character(LEN=lparts), Intent(OUT) :: parts(nparts)  ! Array of substrings to return.
@@ -516,7 +514,7 @@ End If
         Integer :: N, L, LD, i, pos0, pos, pos1
         Logical :: trm
 
-		! EXECUTABLE CODE.
+        ! EXECUTABLE CODE.
         N  = 0
         L  = Len_Trim(str)
         LD = Len(delim)
@@ -560,5 +558,5 @@ End If
                 pos0 = pos
             End If
         End Do
-	End Subroutine
+    End Subroutine
 End Module
